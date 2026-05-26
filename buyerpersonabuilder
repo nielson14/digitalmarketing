@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buyer Persona Builder – Digital Marketing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --border: #E2DDD5;
+    --text: #1A1814;
+    --text-muted: #7A7468;
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --amber: #BA7517;
+    --amber-light: #FAEEDA;
+    --coral: #D85A30;
+    --coral-light: #FAECE7;
+    --purple: #534AB7;
+    --purple-light: #EEEDFE;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--text);
+    color: #F7F5F0;
+    padding: 2rem 2.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  header .wordmark {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  header .sub {
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9E9A93;
+    margin-top: 0.3rem;
+  }
+  header .badge {
+    background: var(--teal-mid);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  .intro-card .icon-box {
+    width: 42px; height: 42px; min-width: 42px;
+    background: var(--teal-light);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+  }
+  .intro-card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+  .intro-card p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+  .brand-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .brand-row .field-group { flex: 1; min-width: 200px; }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.85rem;
+    font-family: inherit;
+    font-size: 0.93rem;
+    color: var(--text);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal-mid);
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.12);
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+
+  .segment-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .segment-block .seg-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .seg-icon {
+    width: 36px; height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .seg-icon.demo { background: var(--blue-light); }
+  .seg-icon.geo  { background: var(--teal-light); }
+  .seg-icon.psych { background: var(--purple-light); }
+  .seg-icon.behav { background: var(--amber-light); }
+  .seg-icon.pain  { background: var(--coral-light); }
+
+  .seg-title { font-weight: 600; font-size: 1rem; }
+  .seg-q { font-size: 0.8rem; color: var(--text-muted); }
+
+  .tag-picker { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+  .tag {
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: var(--surface2);
+    color: var(--text-muted);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .tag.selected {
+    background: var(--teal-light);
+    border-color: var(--teal-mid);
+    color: var(--teal);
+    font-weight: 500;
+  }
+  .tag:hover:not(.selected) { border-color: #aaa; color: var(--text); }
+
+  .char-counter {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-top: 0.3rem;
+  }
+
+  .persona-preview {
+    background: var(--text);
+    color: #F7F5F0;
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    margin-bottom: 2rem;
+    display: none;
+  }
+  .persona-preview h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .persona-preview .preview-brand {
+    font-size: 0.8rem;
+    color: #9E9A93;
+    margin-bottom: 1.25rem;
+  }
+  .preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  .preview-chip { background: rgba(255,255,255,0.07); border-radius: var(--radius-sm); padding: 0.75rem 1rem; }
+  .preview-chip .pc-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #9E9A93; margin-bottom: 0.3rem; }
+  .preview-chip .pc-val { font-size: 0.88rem; font-weight: 500; line-height: 1.4; }
+
+  .submit-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .btn {
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.7rem 1.6rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+  }
+  .btn-primary:hover { background: #0a5240; }
+  .btn-primary:disabled { background: #9E9A93; cursor: not-allowed; }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: #999; }
+
+  .progress-bar-wrap {
+    flex: 1;
+    min-width: 160px;
+    background: var(--surface2);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--teal-mid);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+
+  .feedback-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    display: none;
+  }
+  .feedback-box.visible { display: block; }
+  .feedback-box .fb-header {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .fb-avatar {
+    width: 40px; height: 40px;
+    background: var(--teal-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .fb-name { font-weight: 600; font-size: 0.93rem; }
+  .fb-role { font-size: 0.78rem; color: var(--text-muted); }
+
+  .score-row {
+    display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .score-chip {
+    padding: 0.4rem 1rem; border-radius: 100px;
+    font-size: 0.8rem; font-weight: 600;
+  }
+  .score-chip.great { background: var(--teal-light); color: var(--teal); }
+  .score-chip.ok { background: var(--amber-light); color: var(--amber); }
+  .score-chip.needs { background: var(--coral-light); color: var(--coral); }
+
+  #feedback-text {
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .typing-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--teal-mid);
+    border-radius: 50%;
+    animation: blink 1.2s infinite;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+  .section-divider {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 2rem 0 1rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .hint-tip {
+    background: var(--blue-light);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 1rem;
+    font-size: 0.82rem;
+    color: var(--blue);
+    margin-top: 0.75rem;
+    display: flex; gap: 0.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    header { flex-direction: column; align-items: flex-start; }
+    .brand-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="wordmark">Buyer Persona Builder</div>
+    <div class="sub">Digital Marketing · Strand 1 Standard 2</div>
+  </div>
+  <span class="badge">✦ AI Feedback Enabled</span>
+</header>
+
+<div class="container">
+
+  <div class="intro-card">
+    <div class="icon-box">🎯</div>
+    <div>
+      <h2>Build your ideal customer</h2>
+      <p>A buyer persona is a research-based profile of your ideal customer. Complete all four segmentation categories — Demographics, Geographics, Psychographics, and Behavioral — then submit for AI coaching feedback. The more detail you add, the better your feedback will be.</p>
+    </div>
+  </div>
+
+  <!-- Brand Setup -->
+  <div class="section-divider">Your Business</div>
+  <div class="brand-row">
+    <div class="field-group" style="flex:2;">
+      <label for="brand-name">Business / Brand Name</label>
+      <input type="text" id="brand-name" placeholder="e.g. Summit Outdoor Gear" maxlength="60">
+    </div>
+    <div class="field-group">
+      <label for="product">Product or Service</label>
+      <input type="text" id="product" placeholder="e.g. hiking backpacks" maxlength="60">
+    </div>
+    <div class="field-group">
+      <label for="persona-name">Persona Name</label>
+      <input type="text" id="persona-name" placeholder="e.g. Adventure Alex" maxlength="40">
+    </div>
+  </div>
+
+  <!-- Demographics -->
+  <div class="section-divider">Segmentation</div>
+
+  <div class="segment-block" id="block-demo">
+    <div class="seg-header">
+      <div class="seg-icon demo">👤</div>
+      <div>
+        <div class="seg-title">Demographics <span style="font-weight:300;color:var(--text-muted);">— Who?</span></div>
+        <div class="seg-q">Personal characteristics that describe your ideal customer</div>
+      </div>
+    </div>
+    <div class="grid-3" style="margin-bottom:1rem;">
+      <div>
+        <label>Age Range</label>
+        <select id="age">
+          <option value="">Select…</option>
+          <option>13–17 (Teen)</option>
+          <option>18–24 (Young Adult)</option>
+          <option>25–34 (Millennial)</option>
+          <option>35–44 (Gen X)</option>
+          <option>45–54</option>
+          <option>55–64</option>
+          <option>65+ (Senior)</option>
+        </select>
+      </div>
+      <div>
+        <label>Gender Identity</label>
+        <select id="gender">
+          <option value="">Select…</option>
+          <option>Primarily Male</option>
+          <option>Primarily Female</option>
+          <option>Non-binary / Mixed</option>
+          <option>All genders equally</option>
+        </select>
+      </div>
+      <div>
+        <label>Education Level</label>
+        <select id="education">
+          <option value="">Select…</option>
+          <option>High School</option>
+          <option>Some College</option>
+          <option>Bachelor's Degree</option>
+          <option>Graduate Degree</option>
+          <option>Trade / Vocational</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <label>Annual Income Level</label>
+        <select id="income">
+          <option value="">Select…</option>
+          <option>Under $30k</option>
+          <option>$30k – $50k</option>
+          <option>$50k – $75k</option>
+          <option>$75k – $100k</option>
+          <option>$100k – $150k</option>
+          <option>$150k+</option>
+        </select>
+      </div>
+      <div>
+        <label>Occupation / Industry</label>
+        <input type="text" id="occupation" placeholder="e.g. teacher, engineer, student" maxlength="60">
+      </div>
+    </div>
+  </div>
+
+  <!-- Geographics -->
+  <div class="segment-block" id="block-geo">
+    <div class="seg-header">
+      <div class="seg-icon geo">🗺️</div>
+      <div>
+        <div class="seg-title">Geographics <span style="font-weight:300;color:var(--text-muted);">— Where?</span></div>
+        <div class="seg-q">Where your customer lives and how location shapes their needs</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:1rem;">
+      <div>
+        <label>Location Type</label>
+        <div class="tag-picker" id="location-type">
+          <span class="tag" data-val="Urban">🏙️ Urban</span>
+          <span class="tag" data-val="Suburban">🏘️ Suburban</span>
+          <span class="tag" data-val="Rural">🌾 Rural</span>
+        </div>
+      </div>
+      <div>
+        <label>Region / State</label>
+        <input type="text" id="region" placeholder="e.g. Mountain West, Southeast, Northeast" maxlength="60">
+      </div>
+    </div>
+    <div>
+      <label>How does location affect what they want from your product?</label>
+      <textarea id="geo-notes" placeholder="e.g. Lives near mountains, so lightweight gear for trail hiking is important. Cold winters mean insulation is a priority." maxlength="400"></textarea>
+      <div class="char-counter"><span id="geo-count">0</span>/400</div>
+    </div>
+  </div>
+
+  <!-- Psychographics -->
+  <div class="segment-block" id="block-psych">
+    <div class="seg-header">
+      <div class="seg-icon psych">💭</div>
+      <div>
+        <div class="seg-title">Psychographics <span style="font-weight:300;color:var(--text-muted);">— Why?</span></div>
+        <div class="seg-q">Lifestyle, values, attitudes, and personality</div>
+      </div>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>Values & Interests (pick all that apply)</label>
+      <div class="tag-picker" id="values-tags">
+        <span class="tag" data-val="Sustainability">🌱 Sustainability</span>
+        <span class="tag" data-val="Adventure">🏔️ Adventure</span>
+        <span class="tag" data-val="Family">👨‍👩‍👧 Family</span>
+        <span class="tag" data-val="Status/Luxury">💎 Status / Luxury</span>
+        <span class="tag" data-val="Fitness & Health">💪 Fitness & Health</span>
+        <span class="tag" data-val="Technology">🔧 Technology</span>
+        <span class="tag" data-val="Creativity">🎨 Creativity</span>
+        <span class="tag" data-val="Community">🤝 Community</span>
+        <span class="tag" data-val="Bargain Hunting">💰 Bargain Hunting</span>
+        <span class="tag" data-val="Education">📚 Education</span>
+      </div>
+    </div>
+    <div>
+      <label>Describe their lifestyle and attitude (2–3 sentences)</label>
+      <textarea id="lifestyle" placeholder="e.g. Alex spends weekends hiking or kayaking. They care deeply about environmental impact and prefer brands that give back. They're organized and research products thoroughly before buying." maxlength="500"></textarea>
+      <div class="char-counter"><span id="lifestyle-count">0</span>/500</div>
+    </div>
+  </div>
+
+  <!-- Behavioral -->
+  <div class="segment-block" id="block-behav">
+    <div class="seg-header">
+      <div class="seg-icon behav">🛒</div>
+      <div>
+        <div class="seg-title">Behavioral <span style="font-weight:300;color:var(--text-muted);">— How?</span></div>
+        <div class="seg-q">Shopping patterns, usage habits, and purchase motivation</div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:1rem;">
+      <div>
+        <label>Purchase Frequency</label>
+        <select id="purchase-freq">
+          <option value="">Select…</option>
+          <option>One-time / Rarely</option>
+          <option>Seasonal (a few times/year)</option>
+          <option>Monthly</option>
+          <option>Weekly</option>
+          <option>Daily / Habitual</option>
+        </select>
+      </div>
+      <div>
+        <label>Shopping Channel Preference</label>
+        <select id="channel">
+          <option value="">Select…</option>
+          <option>Primarily in-store</option>
+          <option>Primarily online</option>
+          <option>Mix of both equally</option>
+          <option>Mobile app first</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label>What motivates them to buy? (pick all that apply)</label>
+      <div class="tag-picker" id="motivations">
+        <span class="tag" data-val="Price / Deals">🏷️ Price / Deals</span>
+        <span class="tag" data-val="Quality">⭐ Quality</span>
+        <span class="tag" data-val="Brand Trust">🤝 Brand Trust</span>
+        <span class="tag" data-val="Peer Reviews">💬 Peer Reviews</span>
+        <span class="tag" data-val="Convenience">⚡ Convenience</span>
+        <span class="tag" data-val="Novelty">✨ Novelty</span>
+        <span class="tag" data-val="Social Proof">📣 Social Proof</span>
+        <span class="tag" data-val="Loyalty Rewards">🎁 Loyalty Rewards</span>
+      </div>
+    </div>
+    <div>
+      <label>How do they research before buying?</label>
+      <textarea id="research-habits" placeholder="e.g. Reads multiple blog reviews and watches YouTube unboxings. Asks friends for recommendations and checks Reddit forums before committing to a purchase." maxlength="400"></textarea>
+      <div class="char-counter"><span id="research-count">0</span>/400</div>
+    </div>
+  </div>
+
+  <!-- Pain Points -->
+  <div class="segment-block" id="block-pain">
+    <div class="seg-header">
+      <div class="seg-icon pain">⚡</div>
+      <div>
+        <div class="seg-title">Pain Points &amp; Challenges</div>
+        <div class="seg-q">What specific problems does your product solve for them?</div>
+      </div>
+    </div>
+    <div>
+      <label>What frustrates them about existing solutions?</label>
+      <textarea id="pain-points" placeholder="e.g. Most backpacks on the market are too heavy or don't have enough waterproofing for Pacific Northwest trails. They struggle to find gear that balances eco-friendliness with durability at a reasonable price." maxlength="500"></textarea>
+      <div class="char-counter"><span id="pain-count">0</span>/500</div>
+    </div>
+    <div class="hint-tip" style="margin-top:0.75rem;">
+      💡 Strong pain points connect directly to a feature or benefit your product offers. The more specific, the better.
+    </div>
+  </div>
+
+  <!-- Persona Preview -->
+  <div class="persona-preview" id="persona-preview">
+    <h3 id="preview-persona-name">–</h3>
+    <div class="preview-brand" id="preview-brand">–</div>
+    <div class="preview-grid" id="preview-grid"></div>
+  </div>
+
+  <!-- Submit Row -->
+  <div class="submit-row">
+    <button class="btn btn-primary" id="submit-btn" disabled>Get AI Feedback ↗</button>
+    <button class="btn btn-outline" id="preview-btn">Preview Persona</button>
+    <div style="flex:1; min-width:120px;">
+      <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;">
+        <span class="progress-label">Completion</span>
+        <span class="progress-label" id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- Feedback -->
+  <div class="feedback-box" id="feedback-box">
+    <div class="fb-header">
+      <div class="fb-avatar">🎓</div>
+      <div>
+        <div class="fb-name">Marketing Coach</div>
+        <div class="fb-role">AI Feedback · Strand 1, Standard 2</div>
+      </div>
+      <div id="score-chips" class="score-row" style="margin:0 0 0 auto;"></div>
+    </div>
+    <div id="feedback-text"></div>
+    <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border); display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <button class="btn btn-outline" id="revise-btn">✏️ Revise Persona</button>
+      <button class="btn btn-outline" id="new-btn">🔄 Start New Persona</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API_URL = "https://api.anthropic.com/v1/messages";
+
+function getTagValues(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} .tag.selected`))
+    .map(t => t.dataset.val);
+}
+
+function getField(id) {
+  return document.getElementById(id)?.value?.trim() || '';
+}
+
+function calcCompletion() {
+  const checks = [
+    getField('brand-name'),
+    getField('product'),
+    getField('persona-name'),
+    getField('age'),
+    getField('gender'),
+    getField('income'),
+    getField('region') || getTagValues('location-type').length > 0,
+    getField('lifestyle'),
+    getTagValues('values-tags').length > 0,
+    getField('purchase-freq'),
+    getField('channel'),
+    getTagValues('motivations').length > 0,
+    getField('pain-points'),
+  ];
+  const done = checks.filter(Boolean).length;
+  return Math.round((done / checks.length) * 100);
+}
+
+function updateProgress() {
+  const pct = calcCompletion();
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('submit-btn').disabled = pct < 60;
+}
+
+document.querySelectorAll('input, select, textarea').forEach(el => {
+  el.addEventListener('input', updateProgress);
+  el.addEventListener('change', updateProgress);
+});
+
+document.querySelectorAll('.tag').forEach(tag => {
+  tag.addEventListener('click', () => {
+    const container = tag.parentElement;
+    const isMulti = container.id !== 'location-type';
+    if (!isMulti) {
+      container.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+    }
+    tag.classList.toggle('selected');
+    updateProgress();
+  });
+});
+
+function charCounter(textareaId, counterId) {
+  const ta = document.getElementById(textareaId);
+  const ct = document.getElementById(counterId);
+  if (!ta || !ct) return;
+  ta.addEventListener('input', () => { ct.textContent = ta.value.length; });
+}
+charCounter('geo-notes', 'geo-count');
+charCounter('lifestyle', 'lifestyle-count');
+charCounter('research-habits', 'research-count');
+charCounter('pain-points', 'pain-count');
+
+document.getElementById('preview-btn').addEventListener('click', () => {
+  const preview = document.getElementById('persona-preview');
+  const name = getField('persona-name') || 'Unnamed Persona';
+  const brand = getField('brand-name') || '—';
+  const product = getField('product') || '—';
+
+  document.getElementById('preview-persona-name').textContent = name;
+  document.getElementById('preview-brand').textContent = `${brand} · ${product}`;
+
+  const chips = [
+    { label: 'Age', val: getField('age') || '—' },
+    { label: 'Location', val: getTagValues('location-type').join(', ') || getField('region') || '—' },
+    { label: 'Values', val: getTagValues('values-tags').slice(0,3).join(', ') || '—' },
+    { label: 'Buys via', val: getField('channel') || '—' },
+    { label: 'Motivated by', val: getTagValues('motivations').slice(0,2).join(', ') || '—' },
+    { label: 'Income', val: getField('income') || '—' },
+  ];
+
+  document.getElementById('preview-grid').innerHTML = chips.map(c =>
+    `<div class="preview-chip"><div class="pc-label">${c.label}</div><div class="pc-val">${c.val}</div></div>`
+  ).join('');
+
+  preview.style.display = preview.style.display === 'block' ? 'none' : 'block';
+});
+
+document.getElementById('submit-btn').addEventListener('click', getFeedback);
+
+async function getFeedback() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Analyzing…';
+
+  const personaData = {
+    business: getField('brand-name'),
+    product: getField('product'),
+    personaName: getField('persona-name'),
+    demographics: {
+      age: getField('age'),
+      gender: getField('gender'),
+      education: getField('education'),
+      income: getField('income'),
+      occupation: getField('occupation'),
+    },
+    geographics: {
+      locationType: getTagValues('location-type').join(', '),
+      region: getField('region'),
+      notes: getField('geo-notes'),
+    },
+    psychographics: {
+      values: getTagValues('values-tags').join(', '),
+      lifestyle: getField('lifestyle'),
+    },
+    behavioral: {
+      purchaseFrequency: getField('purchase-freq'),
+      channel: getField('channel'),
+      motivations: getTagValues('motivations').join(', '),
+      researchHabits: getField('research-habits'),
+    },
+    painPoints: getField('pain-points'),
+  };
+
+  const feedbackBox = document.getElementById('feedback-box');
+  const feedbackText = document.getElementById('feedback-text');
+  const scoreChips = document.getElementById('score-chips');
+
+  feedbackBox.classList.add('visible');
+  feedbackBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scoreChips.innerHTML = '';
+  feedbackText.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+
+  const systemPrompt = `You are a friendly, encouraging high school Digital Marketing teacher giving feedback on a student's buyer persona assignment. The assignment aligns with Utah's Digital Marketing course Strand 1, Standard 2, which requires students to understand the four components of a buyer's persona: Demographics (Who), Geographics (Where), Psychographics (Why), and Behavioral (How), plus Pain Points.
+
+Your feedback should:
+1. Start with a score summary line using this EXACT format on its own line:
+   SCORES: Demographics:[Great/Needs Work/OK] | Geographics:[Great/Needs Work/OK] | Psychographics:[Great/Needs Work/OK] | Behavioral:[Great/Needs Work/OK] | Pain Points:[Great/Needs Work/OK]
+
+2. Then write 3–5 paragraphs of warm, specific coaching feedback. Reference the student's actual content. Point out 2–3 things they did well and 2–3 specific improvements they can make. Use marketing vocabulary from the standards (e.g. "market segmentation," "behavioral data," "pain points," "target market").
+
+3. End with one specific, actionable challenge question for the student to think about.
+
+Keep the tone encouraging and professional. Assume the student is in 11th or 12th grade. Do not use markdown formatting like ** or ##.`;
+
+  const userPrompt = `Please evaluate this buyer persona created by a student:
+
+Business: ${personaData.business}
+Product/Service: ${personaData.product}
+Persona Name: ${personaData.personaName}
+
+DEMOGRAPHICS (Who):
+- Age Range: ${personaData.demographics.age}
+- Gender: ${personaData.demographics.gender}
+- Education: ${personaData.demographics.education}
+- Income: ${personaData.demographics.income}
+- Occupation: ${personaData.demographics.occupation}
+
+GEOGRAPHICS (Where):
+- Location Type: ${personaData.geographics.locationType}
+- Region: ${personaData.geographics.region}
+- Location notes: ${personaData.geographics.notes || 'Not provided'}
+
+PSYCHOGRAPHICS (Why):
+- Values & Interests: ${personaData.psychographics.values}
+- Lifestyle description: ${personaData.psychographics.lifestyle || 'Not provided'}
+
+BEHAVIORAL (How):
+- Purchase frequency: ${personaData.behavioral.purchaseFrequency}
+- Shopping channel: ${personaData.behavioral.channel}
+- Purchase motivations: ${personaData.behavioral.motivations}
+- Research habits: ${personaData.behavioral.researchHabits || 'Not provided'}
+
+PAIN POINTS:
+${personaData.painPoints || 'Not provided'}`;
+
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Sorry, I could not generate feedback. Please try again.';
+
+    const scoreLineMatch = text.match(/SCORES:(.+)/);
+    let displayText = text;
+
+    if (scoreLineMatch) {
+      displayText = text.replace(scoreLineMatch[0], '').trim();
+      const scoreParts = scoreLineMatch[1].split('|');
+      scoreChips.innerHTML = scoreParts.map(part => {
+        const [label, rating] = part.split(':').map(s => s.trim());
+        let cls = 'ok';
+        if (rating === 'Great') cls = 'great';
+        if (rating === 'Needs Work') cls = 'needs';
+        return `<span class="score-chip ${cls}">${label}: ${rating}</span>`;
+      }).join('');
+    }
+
+    feedbackText.textContent = displayText;
+
+  } catch (err) {
+    feedbackText.textContent = 'There was a problem connecting to the AI. Please check your internet connection and try again.\n\nError: ' + err.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Get AI Feedback ↗';
+}
+
+document.getElementById('revise-btn').addEventListener('click', () => {
+  document.getElementById('feedback-box').classList.remove('visible');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('new-btn').addEventListener('click', () => {
+  if (!confirm('Start a new persona? Your current work will be cleared.')) return;
+  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('.tag.selected').forEach(t => t.classList.remove('selected'));
+  document.getElementById('feedback-box').classList.remove('visible');
+  document.getElementById('persona-preview').style.display = 'none';
+  document.querySelectorAll('.char-counter span').forEach(el => el.textContent = '0');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+updateProgress();
+</script>
+</body>
+</html>
