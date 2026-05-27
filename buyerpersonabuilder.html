@@ -632,7 +632,8 @@
 </div>
 
 <script>
-const API_URL = "https://api.anthropic.com/v1/messages";
+const API_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
 
 function getTagValues(containerId) {
   return Array.from(document.querySelectorAll(`#${containerId} .tag.selected`))
@@ -814,7 +815,7 @@ ${personaData.painPoints || 'Not provided'}`;
   try {
     const response = await fetch(API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01' },,
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1000,
