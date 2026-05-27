@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ad Campaign Creator – Digital Marketing</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #F2F0EC;
+  --surface: #FFFFFF;
+  --surface2: #E8E5E0;
+  --surface3: #DEDAD4;
+  --border: #CCC8C0;
+  --text: #1A1916;
+  --text-muted: #6B6760;
+  --text-dim: #A8A49E;
+  --ink: #1A1916;
+  --red: #C8281A;
+  --red-light: #FAEAE8;
+  --red-mid: rgba(200,40,26,0.2);
+  --blue: #1A4BC8;
+  --blue-light: #E8EEFA;
+  --blue-mid: rgba(26,75,200,0.2);
+  --green: #1A7A3C;
+  --green-light: #E8F5EE;
+  --green-mid: rgba(26,122,60,0.2);
+  --amber: #A05A00;
+  --amber-light: #FDF3E3;
+  --amber-mid: rgba(160,90,0,0.2);
+  --radius: 6px;
+  --radius-lg: 12px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Ruled paper texture lines */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    rgba(0,0,0,0.04) 27px,
+    rgba(0,0,0,0.04) 28px
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  position: relative;
+  z-index: 2;
+  background: var(--ink);
+  color: #F2F0EC;
+  padding: 0;
+  border-bottom: 3px solid var(--red);
+}
+.header-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.header-logo {
+  padding: 1.25rem 2rem;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.header-logo h1 {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+.header-logo .sub {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: rgba(242,240,236,0.4);
+  letter-spacing: 0.12em;
+  margin-top: 0.3rem;
+}
+.header-tabs {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+}
+.header-tab {
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: rgba(242,240,236,0.4);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.2s;
+  cursor: default;
+}
+.header-tab.active {
+  color: #F2F0EC;
+  background: rgba(255,255,255,0.06);
+}
+.header-tab.done { color: var(--green); }
+.tab-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+.header-right {
+  margin-left: auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+}
+.strand-pill {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--red);
+  border: 1px solid var(--red);
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* Panels */
+.panel { display: none; animation: appear 0.3s ease; }
+.panel.active { display: block; }
+@keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+.panel-title {
+  font-family: var(--mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 0.6rem;
+}
+.panel-title .accent { color: var(--red); }
+.panel-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 560px;
+  margin-bottom: 2.5rem;
+  font-weight: 300;
+}
+
+/* Form */
+label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+input[type="text"], input[type="url"], textarea, select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px rgba(26,25,22,0.08);
+}
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; font-family: var(--sans); }
+
+.field-group { margin-bottom: 1.1rem; }
+.field-hint {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-top: 0.35rem;
+}
+.char-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+.char-count {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.char-count.ok { color: var(--green); }
+.char-count.warn { color: var(--amber); }
+.char-count.over { color: var(--red); }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+
+/* Section divider */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0 1.25rem;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+/* Toggle buttons */
+.toggle-group {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface2);
+}
+.toggle-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.15s;
+  border-right: 1px solid var(--border);
+  font-family: var(--sans);
+}
+.toggle-btn:last-child { border-right: none; }
+.toggle-btn.active {
+  background: var(--ink);
+  color: #F2F0EC;
+}
+
+/* Strategy comparison table */
+.compare-table {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.compare-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  background: var(--ink);
+  color: #F2F0EC;
+}
+.compare-head-cell {
+  padding: 0.75rem 1rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+.compare-head-cell:last-child { border-right: none; }
+.compare-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-row:hover { background: var(--surface2); }
+.compare-cell {
+  padding: 0.7rem 1rem;
+  font-size: 0.82rem;
+  border-right: 1px solid var(--border);
+  line-height: 1.5;
+}
+.compare-cell:last-child { border-right: none; }
+.compare-cell.metric {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface2);
+}
+.good { color: var(--green); font-weight: 600; }
+.bad { color: var(--red); font-weight: 600; }
+.neutral { color: var(--amber); font-weight: 600; }
+
+/* SERP Preview */
+.serp-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.serp-chrome {
+  background: var(--surface2);
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.serp-dots { display: flex; gap: 5px; }
+.serp-dot { width: 10px; height: 10px; border-radius: 50%; }
+.serp-bar {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 0.3rem 0.9rem;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.serp-body { padding: 1.5rem; }
+.serp-sponsored {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.sponsored-badge {
+  border: 1px solid var(--text-dim);
+  padding: 0.1rem 0.35rem;
+  border-radius: 2px;
+  font-size: 0.58rem;
+}
+.serp-result {
+  margin-bottom: 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--blue);
+  background: #FAFAF8;
+}
+.serp-result.organic { border-left-color: var(--green); }
+.serp-url {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--green);
+  margin-bottom: 0.25rem;
+}
+.serp-title {
+  font-size: 1rem;
+  color: var(--blue);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.3rem;
+  cursor: pointer;
+}
+.serp-title:hover { text-decoration: underline; }
+.serp-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.serp-desc .keyword-bold { font-weight: 700; color: var(--ink); }
+.serp-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 0.4rem;
+}
+.label-paid { background: var(--blue-light); color: var(--blue); }
+.label-organic { background: var(--green-light); color: var(--green); }
+
+/* Budget slider */
+.budget-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+}
+.budget-num {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 3px;
+  background: var(--surface3);
+  border-radius: 2px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  cursor: pointer;
+  border: 3px solid var(--bg);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* Keyword chips */
+.keyword-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.kw-chip {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: all 0.12s;
+  user-select: none;
+}
+.kw-chip:hover { border-color: var(--ink); color: var(--ink); }
+.kw-chip.sel { background: var(--ink); border-color: var(--ink); color: #F2F0EC; }
+
+/* Ad copy workspace */
+.ad-workspace {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.workspace-header {
+  background: var(--surface2);
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.workspace-title {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.workspace-body { padding: 1.5rem; }
+
+/* Live preview */
+.live-preview {
+  background: #FAFAF8;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s;
+}
+.preview-label {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.preview-url-bar {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--green);
+  margin-bottom: 0.3rem;
+}
+.preview-ad-title {
+  font-size: 1.05rem;
+  color: var(--blue);
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.35rem;
+  min-height: 1.4em;
+}
+.preview-ad-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  min-height: 2.5em;
+}
+.preview-placeholder { color: var(--text-dim); font-style: italic; }
+
+/* Buttons */
+.btn {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.7rem 1.6rem;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary { background: var(--ink); color: #F2F0EC; }
+.btn-primary:hover { background: #333; }
+.btn-primary:disabled { background: var(--surface3); color: var(--text-dim); cursor: not-allowed; }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--ink); }
+.btn-red { background: var(--red); color: #fff; }
+.btn-red:hover { background: #a81e12; }
+.btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 2rem; flex-wrap: wrap; }
+
+/* Feedback */
+.feedback-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.feedback-head {
+  background: var(--ink);
+  color: #F2F0EC;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.feedback-icon {
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.feedback-name { font-family: var(--mono); font-size: 0.82rem; font-weight: 700; }
+.feedback-role { font-family: var(--mono); font-size: 0.62rem; color: rgba(242,240,236,0.5); }
+.feedback-body {
+  padding: 1.75rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text);
+  white-space: pre-wrap;
+  min-height: 80px;
+}
+
+/* Score chips */
+.score-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.score-chip {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.3rem 0.75rem;
+  border-radius: 2px;
+}
+.score-chip.great { background: #E8F5EE; color: #1A7A3C; border: 1px solid rgba(26,122,60,0.25); }
+.score-chip.ok { background: #FDF3E3; color: #A05A00; border: 1px solid rgba(160,90,0,0.25); }
+.score-chip.needs { background: #FAEAE8; color: #C8281A; border: 1px solid rgba(200,40,26,0.25); }
+
+.typing-dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: var(--ink); border-radius: 50%;
+  animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0.15} 40%{opacity:1} }
+
+/* Info box */
+.info-box {
+  border-left: 3px solid var(--blue);
+  background: var(--blue-light);
+  padding: 0.85rem 1rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.82rem;
+  color: var(--blue);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+.warn-box {
+  border-left: 3px solid var(--red);
+  background: var(--red-light);
+  padding: 0.85rem 1rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.82rem;
+  color: var(--red);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 640px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .compare-head, .compare-row { grid-template-columns: 1fr; }
+  .header-tabs { display: none; }
+  .panel-title { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-logo">
+      <h1>AD CAMPAIGN<br>CREATOR</h1>
+      <div class="sub">DIGITAL MARKETING · STRAND 4</div>
+    </div>
+    <div class="header-tabs">
+      <div class="header-tab active" id="tab-1"><div class="tab-num">1</div>CAMPAIGN SETUP</div>
+      <div class="header-tab" id="tab-2"><div class="tab-num">2</div>ORGANIC VS PAID</div>
+      <div class="header-tab" id="tab-3"><div class="tab-num">3</div>WRITE YOUR ADS</div>
+      <div class="header-tab" id="tab-4"><div class="tab-num">4</div>SERP PREVIEW</div>
+      <div class="header-tab" id="tab-5"><div class="tab-num">5</div>AI FEEDBACK</div>
+    </div>
+    <div class="header-right">
+      <span class="strand-pill">STD 1–4</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- PANEL 1: Campaign Setup -->
+  <div class="panel active" id="panel-1">
+    <div class="panel-label">// Panel 01 — Campaign Setup</div>
+    <div class="panel-title">Define your<br><span class="accent">campaign</span></div>
+    <div class="panel-desc">Every ad campaign starts with a clear foundation. Set your business, target audience, primary keyword, and budget before writing a single word of copy.</div>
+
+    <div class="grid-2">
+      <div class="field-group">
+        <label>Business Name</label>
+        <input type="text" id="biz-name" placeholder="e.g. Summit Outdoor Gear" maxlength="60">
+      </div>
+      <div class="field-group">
+        <label>Product or Service Being Advertised</label>
+        <input type="text" id="biz-product" placeholder="e.g. Lightweight hiking backpacks" maxlength="60">
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field-group">
+        <label>Target Audience</label>
+        <input type="text" id="target-audience" placeholder="e.g. Outdoor enthusiasts aged 25–40 in the Mountain West" maxlength="100">
+      </div>
+      <div class="field-group">
+        <label>Campaign Goal</label>
+        <select id="campaign-goal">
+          <option value="">Select a goal…</option>
+          <option>Drive website traffic</option>
+          <option>Generate direct sales</option>
+          <option>Build brand awareness</option>
+          <option>Collect email leads</option>
+          <option>Increase foot traffic</option>
+          <option>App downloads</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-label">Keywords</div><div class="divider-line"></div></div>
+
+    <div class="field-group">
+      <label>Primary Keyword (what your customer searches for)</label>
+      <input type="text" id="primary-kw" placeholder="e.g. lightweight hiking backpack" maxlength="60">
+      <div class="field-hint">// This is the search term your ad will target. Be specific — broad keywords are expensive and less effective.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Secondary Keywords (click to select up to 4)</label>
+      <div class="keyword-chips" id="kw-suggestions">
+        <span class="kw-chip" onclick="toggleKw(this)">best hiking backpack</span>
+        <span class="kw-chip" onclick="toggleKw(this)">trail backpack review</span>
+        <span class="kw-chip" onclick="toggleKw(this)">buy hiking pack online</span>
+        <span class="kw-chip" onclick="toggleKw(this)">lightweight daypack</span>
+        <span class="kw-chip" onclick="toggleKw(this)">hiking gear near me</span>
+        <span class="kw-chip" onclick="toggleKw(this)">backpacking supplies</span>
+        <span class="kw-chip" onclick="toggleKw(this)">waterproof hiking bag</span>
+        <span class="kw-chip" onclick="toggleKw(this)">outdoor gear store</span>
+      </div>
+      <div class="field-hint">// Secondary keywords expand your reach but cost more. Choose ones that match buying intent.</div>
+    </div>
+
+    <div class="divider"><div class="divider-line"></div><div class="divider-label">Budget</div><div class="divider-line"></div></div>
+
+    <div class="field-group">
+      <div class="budget-display">
+        <label>Daily Ad Budget</label>
+        <div class="budget-num">$<span id="budget-display">50</span><span style="font-size:0.9rem;font-family:var(--sans);font-weight:400;color:var(--text-muted)">/day</span></div>
+      </div>
+      <input type="range" id="budget-slider" min="5" max="500" step="5" value="50">
+      <div class="field-hint">// Industry avg. CPC for retail: $0.50–$2.00. At $50/day you'd get ~25–100 clicks depending on competition.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Landing Page URL</label>
+      <input type="text" id="landing-url" placeholder="e.g. summitgear.com/backpacks" maxlength="80">
+      <div class="field-hint">// Where will users land after clicking? Should match the ad's promise exactly.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goPanel(2)">Compare Strategies →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Organic vs Paid -->
+  <div class="panel" id="panel-2">
+    <div class="panel-label">// Panel 02 — Strategy Comparison</div>
+    <div class="panel-title">Organic <span class="accent">vs</span> Paid</div>
+    <div class="panel-desc">Before writing ads, understand the trade-offs. Real marketers choose strategies based on timeline, budget, and goals — not habit. Study the comparison, then commit to your approach.</div>
+
+    <div class="compare-table">
+      <div class="compare-head">
+        <div class="compare-head-cell">FACTOR</div>
+        <div class="compare-head-cell">🟢 ORGANIC (SEO)</div>
+        <div class="compare-head-cell">🔵 PAID (PPC)</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">COST</div>
+        <div class="compare-cell"><span class="good">Free per click</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Time/content investment required</span></div>
+        <div class="compare-cell"><span class="bad">Cost per click</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Stops when budget runs out</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">SPEED</div>
+        <div class="compare-cell"><span class="bad">Months to years</span><br><span style="font-size:0.78rem;color:var(--text-muted)">SEO builds gradually</span></div>
+        <div class="compare-cell"><span class="good">Immediate</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Live within hours of launch</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">LONGEVITY</div>
+        <div class="compare-cell"><span class="good">Long-lasting</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Ranking can persist for years</span></div>
+        <div class="compare-cell"><span class="bad">Temporary</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Traffic stops when ads stop</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">TRUST</div>
+        <div class="compare-cell"><span class="good">Higher trust</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Users prefer organic results</span></div>
+        <div class="compare-cell"><span class="neutral">Lower trust</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Labeled "Sponsored" — some skip</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">TARGETING</div>
+        <div class="compare-cell"><span class="neutral">Broad</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Keyword-based, less control</span></div>
+        <div class="compare-cell"><span class="good">Precise</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Demographics, location, device</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">CTR</div>
+        <div class="compare-cell"><span class="good">~28% avg CTR</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Top organic result</span></div>
+        <div class="compare-cell"><span class="neutral">~2–5% avg CTR</span><br><span style="font-size:0.78rem;color:var(--text-muted)">Varies heavily by industry</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell metric">BEST FOR</div>
+        <div class="compare-cell">Long-term brand building, blogs, evergreen content</div>
+        <div class="compare-cell">Product launches, promotions, fast results</div>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Which strategy are you leading with for this campaign?</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="strat-paid" onclick="setStrategy('paid')">🔵 Paid (PPC) First</button>
+        <button class="toggle-btn" id="strat-organic" onclick="setStrategy('organic')">🟢 Organic (SEO) First</button>
+        <button class="toggle-btn" id="strat-both" onclick="setStrategy('both')">⚡ Both Together</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Justify your strategy choice (2–3 sentences)</label>
+      <textarea id="strategy-justification" placeholder="e.g. Since we're launching a new product and need immediate visibility, PPC gives us instant placement on the SERP while we build our organic presence through blog content and SEO over the next 6 months." maxlength="500"></textarea>
+      <div class="field-hint">// A real marketing director will ask why. Justify based on your campaign goal, budget, and timeline.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goPanel(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goPanel(3)">Write Your Ads →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Write Ads -->
+  <div class="panel" id="panel-3">
+    <div class="panel-label">// Panel 03 — Ad Copywriting</div>
+    <div class="panel-title">Write your<br><span class="accent">ad copy</span></div>
+    <div class="panel-desc">This is where strategy becomes execution. Every character counts — Google's character limits are strict, and weak copy gets ignored. Write like you're competing for attention against dozens of competitors.</div>
+
+    <!-- Search Ad -->
+    <div class="ad-workspace">
+      <div class="workspace-header">
+        <div class="workspace-title">🔵 SEARCH AD (PPC) — Google Search Result</div>
+        <div style="font-family:var(--mono); font-size:0.62rem; color:var(--text-muted);">Appears at top of SERP</div>
+      </div>
+      <div class="workspace-body">
+
+        <div class="info-box">
+          Google limits: Headline = 30 chars max · Description = 90 chars max · Display URL = 15 chars per path. Exceeding limits means Google auto-truncates your ad — your message gets cut off.
+        </div>
+
+        <div class="field-group">
+          <label>Headline 1 — Primary hook (30 char max)</label>
+          <input type="text" id="h1" placeholder="e.g. Ultralight Hiking Packs" maxlength="30" oninput="updateCounter('h1','c1',30); updatePreview();">
+          <div class="char-wrap">
+            <div class="field-hint">// Include your primary keyword if possible. Most important headline.</div>
+            <div class="char-count ok" id="c1">0/30</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Headline 2 — Value proposition (30 char max)</label>
+          <input type="text" id="h2" placeholder="e.g. Free Shipping Over $75" maxlength="30" oninput="updateCounter('h2','c2',30); updatePreview();">
+          <div class="char-wrap">
+            <div class="field-hint">// What makes you different? Price, shipping, quality, guarantee?</div>
+            <div class="char-count ok" id="c2">0/30</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Headline 3 — Call to action (30 char max)</label>
+          <input type="text" id="h3" placeholder="e.g. Shop the Full Collection" maxlength="30" oninput="updateCounter('h3','c3',30); updatePreview();">
+          <div class="char-wrap">
+            <div class="field-hint">// Direct the user. "Shop Now", "Get a Free Quote", "Order Today"</div>
+            <div class="char-count ok" id="c3">0/30</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Ad Description — Full pitch (90 char max)</label>
+          <textarea id="ad-desc" placeholder="e.g. Engineered for the trail. Our ultralight packs weigh under 2 lbs without sacrificing durability. Shop now." maxlength="90" rows="2" oninput="updateCounter('ad-desc','c4',90); updatePreview();"></textarea>
+          <div class="char-wrap">
+            <div class="field-hint">// Expand on your headlines. Include a benefit and reinforce your CTA.</div>
+            <div class="char-count ok" id="c4">0/90</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Display URL Path (15 char max — what users SEE, not the real URL)</label>
+          <input type="text" id="display-path" placeholder="e.g. /HikingPacks" maxlength="15" oninput="updateCounter('display-path','c5',15); updatePreview();">
+          <div class="char-wrap">
+            <div class="field-hint">// Make it clean and relevant. This builds trust before the click.</div>
+            <div class="char-count ok" id="c5">0/15</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meta Description -->
+    <div class="ad-workspace">
+      <div class="workspace-header">
+        <div class="workspace-title">🟢 META DESCRIPTION — Organic Search Result</div>
+        <div style="font-family:var(--mono); font-size:0.62rem; color:var(--text-muted);">Appears under page title in organic results</div>
+      </div>
+      <div class="workspace-body">
+
+        <div class="info-box">
+          Meta descriptions don't directly affect ranking but dramatically affect click-through rate. Google shows ~155–160 characters. Write for humans, not algorithms — this is your organic sales pitch.
+        </div>
+
+        <div class="field-group">
+          <label>Page Title Tag (60 char max)</label>
+          <input type="text" id="meta-title" placeholder="e.g. Lightweight Hiking Backpacks | Summit Outdoor Gear" maxlength="60" oninput="updateCounter('meta-title','c6',60); updatePreview();">
+          <div class="char-wrap">
+            <div class="field-hint">// Keyword first, brand last. This is what appears as the blue link in organic results.</div>
+            <div class="char-count ok" id="c6">0/60</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label>Meta Description (155 char max)</label>
+          <textarea id="meta-desc" placeholder="e.g. Discover ultralight hiking backpacks built for serious trails. Free shipping on orders over $75. Browse our full collection and find your perfect pack." maxlength="155" rows="3" oninput="updateCounter('meta-desc','c7',155); updatePreview();"></textarea>
+          <div class="char-wrap">
+            <div class="field-hint">// Include your keyword naturally. End with a CTA. Make someone want to click.</div>
+            <div class="char-count ok" id="c7">0/155</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goPanel(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goPanel(4)">Preview SERP →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 4: SERP Preview -->
+  <div class="panel" id="panel-4">
+    <div class="panel-label">// Panel 04 — SERP Preview</div>
+    <div class="panel-title">Your ads on<br><span class="accent">the SERP</span></div>
+    <div class="panel-desc">This is exactly how your ads appear in a Google Search Engine Results Page. Study them critically — would you click on your own ad? Compare your paid and organic results side by side.</div>
+
+    <div class="serp-wrap">
+      <div class="serp-chrome">
+        <div class="serp-dots">
+          <div class="serp-dot" style="background:#FF5F57"></div>
+          <div class="serp-dot" style="background:#FEBC2E"></div>
+          <div class="serp-dot" style="background:#28C840"></div>
+        </div>
+        <div class="serp-bar">
+          🔍 <span id="serp-kw-display">your keyword here</span>
+        </div>
+      </div>
+      <div class="serp-body">
+
+        <div class="serp-sponsored">
+          <span class="sponsored-badge">Sponsored</span>
+          Paid results appear above organic listings
+        </div>
+
+        <!-- Paid result -->
+        <div class="serp-result">
+          <span class="serp-label label-paid">PAID AD</span>
+          <div class="serp-url" id="preview-paid-url">yoursite.com/path</div>
+          <div class="serp-title" id="preview-paid-title">Your headline will appear here</div>
+          <div class="serp-desc" id="preview-paid-desc">Your ad description will appear here after you write it in the previous step.</div>
+        </div>
+
+        <div style="padding: 0.5rem 0; border-top: 1px solid var(--border); margin: 0.75rem 0; display:flex; align-items:center; gap:0.5rem;">
+          <span style="font-family:var(--mono); font-size:0.62rem; color:var(--text-dim);">ORGANIC RESULTS</span>
+          <div style="flex:1; height:1px; background:var(--border)"></div>
+        </div>
+
+        <!-- Organic result -->
+        <div class="serp-result organic">
+          <span class="serp-label label-organic">ORGANIC</span>
+          <div class="serp-url" id="preview-organic-url">yoursite.com</div>
+          <div class="serp-title" id="preview-organic-title">Your page title will appear here</div>
+          <div class="serp-desc" id="preview-organic-desc">Your meta description will appear here — this is your organic click pitch.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="warn-box" id="serp-warnings" style="display:none;"></div>
+
+    <div class="field-group">
+      <label>Self-Evaluation — Would you click your own ad? Why or why not?</label>
+      <textarea id="self-eval" placeholder="e.g. I would click the paid ad because the headline directly answers the search intent and the description gives a clear reason to choose us over competitors. However, I think the meta description could be stronger — it doesn't include a price or specific differentiator." maxlength="500"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goPanel(3)">← Revise Copy</button>
+      <button class="btn btn-red" onclick="getFeedback()">Get Professional Feedback →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 5: Feedback -->
+  <div class="panel" id="panel-5">
+    <div class="panel-label">// Panel 05 — Professional Review</div>
+    <div class="panel-title">Campaign<br><span class="accent">debrief</span></div>
+    <div class="panel-desc">Your ad copy has been reviewed against real-world professional standards. This is the kind of critique you'd receive in an actual agency review.</div>
+
+    <div class="score-row" id="score-row"></div>
+
+    <div class="feedback-card">
+      <div class="feedback-head">
+        <div class="feedback-icon">📋</div>
+        <div>
+          <div class="feedback-name">AD CAMPAIGN DIRECTOR</div>
+          <div class="feedback-role">Professional Review · Strand 4, Standards 1–4</div>
+        </div>
+      </div>
+      <div class="feedback-body" id="feedback-body">
+        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+      </div>
+    </div>
+
+    <!-- Ad copy summary -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; margin-bottom:1.5rem;">
+      <div style="background:var(--surface2); padding:0.75rem 1.25rem; border-bottom:1px solid var(--border); font-family:var(--mono); font-size:0.7rem; font-weight:700; letter-spacing:0.08em;">YOUR SUBMITTED COPY</div>
+      <div style="padding:1.25rem; display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;" id="copy-summary"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goPanel(3)">← Revise Copy</button>
+      <button class="btn btn-outline" onclick="resetAll()">🔄 New Campaign</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
+let selectedStrategy = 'paid';
+
+function goPanel(n) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i+1===n));
+  document.querySelectorAll('[id^="tab-"]').forEach((t,i) => {
+    t.classList.remove('active','done');
+    if (i+1 === n) t.classList.add('active');
+    if (i+1 < n) t.classList.add('done');
+  });
+  if (n === 4) buildSerpPreview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Budget slider
+document.getElementById('budget-slider').addEventListener('input', function() {
+  document.getElementById('budget-display').textContent = parseInt(this.value).toLocaleString();
+});
+
+// Keyword chips
+let selectedKws = [];
+function toggleKw(chip) {
+  if (chip.classList.contains('sel')) {
+    chip.classList.remove('sel');
+    selectedKws = selectedKws.filter(k => k !== chip.textContent);
+  } else {
+    if (selectedKws.length >= 4) return;
+    chip.classList.add('sel');
+    selectedKws.push(chip.textContent);
+  }
+}
+
+// Strategy toggle
+function setStrategy(s) {
+  selectedStrategy = s;
+  ['paid','organic','both'].forEach(id => {
+    document.getElementById(`strat-${id}`).classList.toggle('active', id === s);
+  });
+}
+
+// Character counters
+function updateCounter(inputId, counterId, max) {
+  const val = document.getElementById(inputId).value.length;
+  const el = document.getElementById(counterId);
+  el.textContent = `${val}/${max}`;
+  el.className = 'char-count ' + (val > max ? 'over' : val > max * 0.85 ? 'warn' : 'ok');
+}
+
+// Live preview
+function updatePreview() {
+  const h1 = document.getElementById('h1').value;
+  const h2 = document.getElementById('h2').value;
+  const h3 = document.getElementById('h3').value;
+  const desc = document.getElementById('ad-desc').value;
+  const path = document.getElementById('display-path').value;
+  const url = document.getElementById('landing-url').value || 'yoursite.com';
+  const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+
+  // Update mini preview on panel 3 (not needed here — handled by SERP builder)
+}
+
+function buildSerpPreview() {
+  const h1 = document.getElementById('h1').value || 'Your Headline 1';
+  const h2 = document.getElementById('h2').value || 'Your Headline 2';
+  const h3 = document.getElementById('h3').value || '';
+  const adDesc = document.getElementById('ad-desc').value || 'Your ad description will appear here.';
+  const path = document.getElementById('display-path').value || '/YourPage';
+  const url = document.getElementById('landing-url').value || 'yoursite.com';
+  const domain = url.replace(/^https?:\/\//, '').split('/')[0] || 'yoursite.com';
+  const metaTitle = document.getElementById('meta-title').value || 'Your Page Title';
+  const metaDesc = document.getElementById('meta-desc').value || 'Your meta description will appear here.';
+  const kw = document.getElementById('primary-kw').value || 'your keyword';
+
+  document.getElementById('serp-kw-display').textContent = kw;
+  document.getElementById('preview-paid-url').textContent = `${domain}${path}`;
+  document.getElementById('preview-paid-title').textContent = [h1, h2, h3].filter(Boolean).join(' | ');
+  document.getElementById('preview-paid-desc').innerHTML = boldKeyword(adDesc, kw);
+  document.getElementById('preview-organic-url').textContent = domain;
+  document.getElementById('preview-organic-title').textContent = metaTitle;
+  document.getElementById('preview-organic-desc').innerHTML = boldKeyword(metaDesc, kw);
+
+  // Warnings
+  const warnings = [];
+  if (!h1) warnings.push('⚠ Headline 1 is empty — your paid ad has no title.');
+  if (!adDesc) warnings.push('⚠ Ad description is empty — Google will auto-generate one, which is rarely good.');
+  if (!metaDesc) warnings.push('⚠ Meta description is empty — Google will pull random text from your page.');
+  if (h1.length > 30) warnings.push('⚠ Headline 1 exceeds 30 characters — Google will truncate it.');
+  if (adDesc.length > 90) warnings.push('⚠ Ad description exceeds 90 characters — it will be cut off.');
+  if (metaDesc.length > 155) warnings.push('⚠ Meta description exceeds 155 characters — Google will truncate it.');
+
+  const warnBox = document.getElementById('serp-warnings');
+  if (warnings.length > 0) {
+    warnBox.style.display = 'block';
+    warnBox.innerHTML = warnings.join('<br>');
+  } else {
+    warnBox.style.display = 'none';
+  }
+}
+
+function boldKeyword(text, kw) {
+  if (!kw || !text) return text;
+  const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<span class="keyword-bold">$1</span>');
+}
+
+async function getFeedback() {
+  goPanel(5);
+  const feedbackEl = document.getElementById('feedback-body');
+  feedbackEl.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  document.getElementById('score-row').innerHTML = '';
+
+  const data = {
+    biz: document.getElementById('biz-name').value,
+    product: document.getElementById('biz-product').value,
+    audience: document.getElementById('target-audience').value,
+    goal: document.getElementById('campaign-goal').value,
+    primaryKw: document.getElementById('primary-kw').value,
+    secondaryKws: selectedKws.join(', '),
+    budget: document.getElementById('budget-slider').value,
+    landingUrl: document.getElementById('landing-url').value,
+    strategy: selectedStrategy,
+    stratJustification: document.getElementById('strategy-justification').value,
+    h1: document.getElementById('h1').value,
+    h2: document.getElementById('h2').value,
+    h3: document.getElementById('h3').value,
+    adDesc: document.getElementById('ad-desc').value,
+    displayPath: document.getElementById('display-path').value,
+    metaTitle: document.getElementById('meta-title').value,
+    metaDesc: document.getElementById('meta-desc').value,
+    selfEval: document.getElementById('self-eval').value,
+  };
+
+  // Copy summary
+  document.getElementById('copy-summary').innerHTML = `
+    <div>
+      <div style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.75rem;text-transform:uppercase;">Paid Ad</div>
+      <div style="font-size:0.78rem;margin-bottom:0.3rem;"><span style="color:var(--text-muted);font-family:var(--mono);font-size:0.62rem;">H1</span> ${data.h1 || '—'}</div>
+      <div style="font-size:0.78rem;margin-bottom:0.3rem;"><span style="color:var(--text-muted);font-family:var(--mono);font-size:0.62rem;">H2</span> ${data.h2 || '—'}</div>
+      <div style="font-size:0.78rem;margin-bottom:0.3rem;"><span style="color:var(--text-muted);font-family:var(--mono);font-size:0.62rem;">H3</span> ${data.h3 || '—'}</div>
+      <div style="font-size:0.78rem;margin-top:0.5rem;color:var(--text-muted);">${data.adDesc || '—'}</div>
+    </div>
+    <div>
+      <div style="font-family:var(--mono);font-size:0.62rem;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.75rem;text-transform:uppercase;">Organic / Meta</div>
+      <div style="font-size:0.78rem;font-weight:600;color:var(--blue);margin-bottom:0.3rem;">${data.metaTitle || '—'}</div>
+      <div style="font-size:0.78rem;color:var(--text-muted);">${data.metaDesc || '—'}</div>
+    </div>
+  `;
+
+  const systemPrompt = `You are a demanding, experienced digital advertising director reviewing a high school student's first ad campaign. You hold work to real agency standards — Google Ads professionals, content strategists, and SEM specialists would review this work. Weak copy, poor keyword alignment, and generic CTAs get rejected in the real world.
+
+SCORING — apply strictly:
+- "Great" = professional quality. Keyword-aligned, benefit-driven, strong CTA, within character limits, would generate real clicks. Rare.
+- "OK" = functional but generic, missing opportunities, or slightly off-strategy. Needs sharpening.
+- "Needs Work" = vague, keyword-missing, generic CTA like "click here", over character limits, or misaligned with campaign goal. Call it out directly.
+
+Your response must start with this EXACT line:
+SCORES: Ad Headlines:[Great/OK/Needs Work] | Ad Description:[Great/OK/Needs Work] | Meta Description:[Great/OK/Needs Work] | Keyword Strategy:[Great/OK/Needs Work] | Strategy Rationale:[Great/OK/Needs Work]
+
+Then write 4-5 paragraphs of direct professional feedback:
+1. Evaluate the headlines — are they keyword-aligned, benefit-driven, and differentiated? Does Headline 1 hook immediately? Is there a clear CTA?
+2. Evaluate the ad description — does it expand on the headlines, include a specific benefit, and end with action? Generic descriptions like "We have the best products" are unacceptable.
+3. Evaluate the meta description — does it naturally include the keyword, communicate a value proposition, and make someone want to click over competitors?
+4. Evaluate keyword strategy — is the primary keyword specific enough? Do secondary keywords show buying intent or are they too broad?
+5. Evaluate the organic vs paid strategy justification — is it grounded in the campaign goal and timeline, or just guessing?
+
+Reference the student's actual copy by quoting specific words and phrases. Industry benchmarks: average PPC CTR is 2-5%, top-performing ads hit 10%+. A missing keyword in Headline 1 is a professional mistake. A generic CTA like "learn more" underperforms by 30%+ vs specific CTAs.
+
+End with one brutal, specific challenge: a rewrite challenge — give them ONE headline or description and tell them to make it demonstrably better.
+
+Do not soften weak work. Students are preparing for real careers. No markdown ** or ##.`;
+
+  const userPrompt = `Student Ad Campaign Review:
+
+BUSINESS: ${data.biz}
+PRODUCT: ${data.product}
+TARGET AUDIENCE: ${data.audience}
+CAMPAIGN GOAL: ${data.goal}
+PRIMARY KEYWORD: ${data.primaryKw}
+SECONDARY KEYWORDS: ${data.secondaryKws || 'None selected'}
+DAILY BUDGET: $${data.budget}
+LANDING PAGE: ${data.landingUrl}
+STRATEGY CHOSEN: ${data.strategy}
+STRATEGY JUSTIFICATION: ${data.stratJustification || 'Not provided'}
+
+PAID AD COPY:
+- Headline 1 (${data.h1.length}/30 chars): "${data.h1}"
+- Headline 2 (${data.h2.length}/30 chars): "${data.h2}"
+- Headline 3 (${data.h3.length}/30 chars): "${data.h3}"
+- Description (${data.adDesc.length}/90 chars): "${data.adDesc}"
+- Display URL Path (${data.displayPath.length}/15 chars): "${data.displayPath}"
+
+ORGANIC / META:
+- Title Tag (${data.metaTitle.length}/60 chars): "${data.metaTitle}"
+- Meta Description (${data.metaDesc.length}/155 chars): "${data.metaDesc}"
+
+STUDENT SELF-EVALUATION: ${data.selfEval || 'Not provided'}`;
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1100,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    const result = await response.json();
+    const text = result.content?.[0]?.text || 'Could not generate feedback. Please try again.';
+
+    const scoreMatch = text.match(/SCORES:(.+)/);
+    let mainText = text;
+
+    if (scoreMatch) {
+      mainText = mainText.replace(scoreMatch[0], '').trim();
+      const parts = scoreMatch[1].split('|');
+      document.getElementById('score-row').innerHTML = parts.map(p => {
+        const [label, rating] = p.split(':').map(s => s.trim());
+        let cls = rating === 'Great' ? 'great' : rating === 'OK' ? 'ok' : 'needs';
+        return `<span class="score-chip ${cls}">${label}: ${rating}</span>`;
+      }).join('');
+    }
+
+    feedbackEl.textContent = mainText;
+
+  } catch (err) {
+    feedbackEl.textContent = 'Connection error: ' + err.message + '\n\nPlease check your connection and try again.';
+  }
+}
+
+function resetAll() {
+  if (!confirm('Start a new campaign? All work will be cleared.')) return;
+  document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('.kw-chip.sel').forEach(c => c.classList.remove('sel'));
+  selectedKws = [];
+  document.getElementById('budget-slider').value = 50;
+  document.getElementById('budget-display').textContent = '50';
+  setStrategy('paid');
+  goPanel(1);
+}
+</script>
+</body>
+</html>
