@@ -704,18 +704,14 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
 
     <div class="field-group">
-      <label>Secondary Keywords (click to select up to 4)</label>
-      <div class="keyword-chips" id="kw-suggestions">
-        <span class="kw-chip" onclick="toggleKw(this)">best hiking backpack</span>
-        <span class="kw-chip" onclick="toggleKw(this)">trail backpack review</span>
-        <span class="kw-chip" onclick="toggleKw(this)">buy hiking pack online</span>
-        <span class="kw-chip" onclick="toggleKw(this)">lightweight daypack</span>
-        <span class="kw-chip" onclick="toggleKw(this)">hiking gear near me</span>
-        <span class="kw-chip" onclick="toggleKw(this)">backpacking supplies</span>
-        <span class="kw-chip" onclick="toggleKw(this)">waterproof hiking bag</span>
-        <span class="kw-chip" onclick="toggleKw(this)">outdoor gear store</span>
+      <label>Secondary Keywords <span id="kw-generating" style="font-family:var(--mono);font-size:0.6rem;color:var(--text-dim);font-weight:400;font-style:italic;"></span></label>
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.5rem;">
+        <input type="text" id="manual-kw" placeholder="Type a keyword and press Add" maxlength="60" style="flex:1;">
+        <button class="btn btn-outline" onclick="addManualKw()" style="padding:0.5rem 1rem;font-size:0.8rem;white-space:nowrap;">+ Add</button>
       </div>
-      <div class="field-hint">// Secondary keywords expand your reach but cost more. Choose ones that match buying intent.</div>
+      <div class="keyword-chips" id="kw-suggestions">
+      </div>
+      <div class="field-hint">// Secondary keywords expand your reach but cost more. Choose ones that match buying intent. Select up to 4.</div>
     </div>
 
     <div class="divider"><div class="divider-line"></div><div class="divider-label">Budget</div><div class="divider-line"></div></div>
@@ -1033,6 +1029,86 @@ document.getElementById('budget-slider').addEventListener('input', function() {
 
 // Keyword chips
 let selectedKws = [];
+
+function addManualKw() {
+  const input = document.getElementById('manual-kw');
+  const val = input.value.trim();
+  if (!val || selectedKws.length >= 4) return;
+  const container = document.getElementById('kw-suggestions');
+  // Remove placeholder if present
+  const placeholder = container.querySelector('span[style]');
+  if (placeholder) placeholder.remove();
+  const chip = document.createElement('span');
+  chip.className = 'kw-chip sel';
+  chip.textContent = val;
+  chip.onclick = () => toggleKw(chip);
+  container.appendChild(chip);
+  selectedKws.push(val);
+  input.value = '';
+}
+
+document.getElementById('manual-kw').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') { e.preventDefault(); addManualKw(); }
+});
+
+async function generateKeywords() {
+  const primaryKw = document.getElementById('primary-kw').value.trim();
+  const product = document.getElementById('biz-product').value.trim();
+  const container = document.getElementById('kw-suggestions');
+  const statusEl = document.getElementById('kw-generating');
+  const genBtn = document.getElementById('gen-btn');
+
+  if (!primaryKw && !product) {
+    statusEl.textContent = '← fill in primary keyword first';
+    setTimeout(() => statusEl.textContent = '', 2500);
+    return;
+  }
+
+  selectedKws = [];
+  genBtn.textContent = '⟳ Loading…';
+  genBtn.disabled = true;
+  statusEl.textContent = '';
+  container.innerHTML = '<span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-dim);font-style:italic;">Generating suggestions…</span>';
+
+  const context = [primaryKw, product].filter(Boolean).join(' / ');
+  const prompt = `Generate exactly 8 secondary keyword suggestions for a Google Ads campaign about: "${context}". Return ONLY a valid JSON array of 8 strings, 2-5 words each. Mix purchase-intent, comparison, local, and long-tail variations. No explanation. No markdown. Start your response with [ and end with ].`;
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 250,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message || 'API error');
+
+    const text = (data.content?.[0]?.text || '').trim();
+    const match = text.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('Could not parse response');
+    const keywords = JSON.parse(match[0]);
+    if (!Array.isArray(keywords) || keywords.length === 0) throw new Error('Empty array');
+
+    container.innerHTML = keywords.map(kw =>
+      `<span class="kw-chip" onclick="toggleKw(this)">${kw}</span>`
+    ).join('');
+    statusEl.textContent = '— click to select up to 4';
+
+  } catch (err) {
+    container.innerHTML = '<span style="font-family:var(--mono);font-size:0.68rem;color:var(--text-muted);font-style:italic;">Could not generate suggestions. Use the text field above to add keywords manually.</span>';
+    statusEl.textContent = '';
+    console.error('Keyword error:', err.message);
+  }
+
+  genBtn.textContent = '✦ AI Suggest';
+  genBtn.disabled = false;
+}
+
 function toggleKw(chip) {
   if (chip.classList.contains('sel')) {
     chip.classList.remove('sel');
