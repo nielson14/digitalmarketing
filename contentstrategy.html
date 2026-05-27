@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Strategy Builder – Digital Marketing</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,800;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #FDFAF5;
+  --surface: #FFFFFF;
+  --surface2: #F5F1EA;
+  --surface3: #EDE8DF;
+  --border: #DDD8CE;
+  --text: #1C1915;
+  --text-muted: #7C7568;
+  --text-dim: #B5AFA6;
+  --owned: #1A6B4A;
+  --owned-light: #E4F5ED;
+  --owned-mid: rgba(26,107,74,0.3);
+  --earned: #8B4513;
+  --earned-light: #FDF0E6;
+  --earned-mid: rgba(139,69,19,0.3);
+  --paid: #1A3A6B;
+  --paid-light: #E6EDF8;
+  --paid-mid: rgba(26,58,107,0.3);
+  --accent: #D4622A;
+  --accent-light: #FDF0EB;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --serif: 'Fraunces', serif;
+  --sans: 'DM Sans', sans-serif;
+}
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Decorative top stripe */
+.top-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, var(--owned) 33%, var(--earned) 33% 66%, var(--paid) 66%);
+}
+
+header {
+  padding: 1.75rem 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.logo-area h1 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.logo-area .sub {
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+.strand-tag {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.85rem;
+  border-radius: 100px;
+  border: 1px solid rgba(212,98,42,0.25);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+/* Progress steps */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 3rem;
+}
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  cursor: default;
+}
+.step-circle {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--surface);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.3s;
+}
+.step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin: 0 0.5rem;
+}
+.step.active .step-circle {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+.step.active .step-label { color: var(--accent); }
+.step.done .step-circle {
+  border-color: var(--owned);
+  background: var(--owned-light);
+  color: var(--owned);
+}
+.step.done .step-label { color: var(--owned); }
+
+/* Panels */
+.panel { display: none; animation: slideIn 0.35s ease; }
+.panel.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.panel-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+.panel-title {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
+}
+.panel-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.panel-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 580px;
+  margin-bottom: 2.5rem;
+}
+
+/* Form elements */
+label {
+  display: block;
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+input[type="text"], textarea, select {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.9rem;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(212,98,42,0.1);
+}
+textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+
+.field-group { margin-bottom: 1.1rem; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
+
+/* Persona recap card */
+.persona-recap {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+}
+.recap-item .recap-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+}
+.recap-item .recap-val {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+/* Trifecta section headers */
+.trifecta-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2rem 0 1rem;
+}
+.trifecta-badge {
+  padding: 0.3rem 1rem;
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.owned-badge { background: var(--owned-light); color: var(--owned); border: 1px solid var(--owned-mid); }
+.earned-badge { background: var(--earned-light); color: var(--earned); border: 1px solid var(--earned-mid); }
+.paid-badge { background: var(--paid-light); color: var(--paid); border: 1px solid var(--paid-mid); }
+.trifecta-def {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Content calendar grid */
+.calendar-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.calendar-header {
+  display: grid;
+  grid-template-columns: 120px repeat(4, 1fr);
+  background: var(--surface2);
+  border-bottom: 1.5px solid var(--border);
+}
+.cal-head {
+  padding: 0.65rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border);
+}
+.cal-head:last-child { border-right: none; }
+
+.calendar-row {
+  display: grid;
+  grid-template-columns: 120px repeat(4, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.calendar-row:last-child { border-bottom: none; }
+.cal-platform {
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-right: 1px solid var(--border);
+  background: var(--surface2);
+}
+.platform-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cal-cell {
+  padding: 0.4rem;
+  border-right: 1px solid var(--border);
+}
+.cal-cell:last-child { border-right: none; }
+
+.content-slot {
+  width: 100%;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  padding: 0.3rem 0.5rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.content-slot:hover { border-color: var(--accent); color: var(--text); }
+.content-slot.filled {
+  border-style: solid;
+  font-weight: 500;
+  color: var(--text);
+}
+.content-slot.filled.owned { background: var(--owned-light); border-color: var(--owned-mid); color: var(--owned); }
+.content-slot.filled.earned { background: var(--earned-light); border-color: var(--earned-mid); color: var(--earned); }
+.content-slot.filled.paid { background: var(--paid-light); border-color: var(--paid-mid); color: var(--paid); }
+
+/* Content picker modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28,25,21,0.5);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  display: none;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 80px rgba(28,25,21,0.2);
+}
+.modal h3 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 0.35rem;
+}
+.modal .modal-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.modal-option {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+.modal-option:hover { border-color: var(--accent); background: var(--accent-light); }
+.modal-option.selected { font-weight: 600; }
+.modal-option.selected.owned { border-color: var(--owned); background: var(--owned-light); color: var(--owned); }
+.modal-option.selected.earned { border-color: var(--earned); background: var(--earned-light); color: var(--earned); }
+.modal-option.selected.paid { border-color: var(--paid); background: var(--paid-light); color: var(--paid); }
+.modal-option-icon { font-size: 1.1rem; }
+.modal-option-type {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+.type-owned { background: var(--owned-light); color: var(--owned); }
+.type-earned { background: var(--earned-light); color: var(--earned); }
+.type-paid { background: var(--paid-light); color: var(--paid); }
+.modal-clear {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  font-family: var(--sans);
+  padding: 0;
+}
+.modal-clear:hover { color: var(--accent); }
+
+/* Trifecta balance bar */
+.balance-row {
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.balance-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+.balance-bar-wrap {
+  height: 20px;
+  border-radius: 100px;
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+.balance-seg {
+  height: 100%;
+  transition: width 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: white;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.balance-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+}
+.legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Strategy summary */
+.strategy-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.strategy-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Frequency selector */
+.freq-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.freq-btn {
+  padding: 0.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: var(--surface);
+  transition: all 0.15s;
+  font-family: var(--sans);
+}
+.freq-btn:hover { border-color: var(--accent); color: var(--accent); }
+.freq-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* Buttons */
+.btn {
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #b8511f; transform: translateY(-1px); }
+.btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; }
+.btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+.btn-outline:hover { border-color: var(--text-muted); }
+.btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 2rem; flex-wrap: wrap; }
+
+/* Feedback */
+.feedback-wrap {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.feedback-head {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--surface2);
+}
+.coach-avatar {
+  width: 40px; height: 40px;
+  background: var(--accent-light);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  border: 2px solid rgba(212,98,42,0.2);
+}
+.coach-name { font-weight: 700; font-size: 0.93rem; }
+.coach-role { font-size: 0.75rem; color: var(--text-muted); }
+.feedback-body {
+  padding: 1.75rem;
+  font-size: 0.91rem;
+  line-height: 1.8;
+  color: var(--text);
+  white-space: pre-wrap;
+  min-height: 100px;
+}
+
+/* Score chips */
+.score-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.score-chip {
+  padding: 0.35rem 0.9rem;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.score-chip.great { background: var(--owned-light); color: var(--owned); border: 1px solid var(--owned-mid); }
+.score-chip.ok { background: var(--earned-light); color: var(--earned); border: 1px solid var(--earned-mid); }
+.score-chip.needs { background: #FDECEA; color: #C0392B; border: 1px solid rgba(192,57,43,0.3); }
+
+.typing-dot {
+  display: inline-block; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: blink 1.2s infinite; margin: 0 2px; vertical-align: middle;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+/* Hint box */
+.hint {
+  background: var(--paid-light);
+  border: 1px solid var(--paid-mid);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.82rem;
+  color: var(--paid);
+  line-height: 1.5;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .freq-grid { grid-template-columns: repeat(2,1fr); }
+  .calendar-header, .calendar-row { grid-template-columns: 90px repeat(4,1fr); }
+  .panel-title { font-size: 1.6rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-stripe"></div>
+
+<header>
+  <div class="logo-area">
+    <h1>Content Strategy Builder</h1>
+    <div class="sub">Digital Marketing · Strand 2 · Standards 1 & 2</div>
+  </div>
+  <span class="strand-tag">✦ Continues from Sim 1</span>
+</header>
+
+<div class="container">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step-1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Your Persona</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Content Calendar</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Strategy Details</div>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step-4">
+      <div class="step-circle">4</div>
+      <div class="step-label">AI Feedback</div>
+    </div>
+  </div>
+
+  <!-- PANEL 1: Persona Import -->
+  <div class="panel active" id="panel-1">
+    <div class="panel-eyebrow">Step 1 of 4</div>
+    <div class="panel-title">Bring your<br><em>buyer persona</em></div>
+    <div class="panel-desc">Enter key details from the persona you built in Simulation 1. Your content strategy should be tailored to this specific customer — the AI will check whether your choices actually match who they are.</div>
+
+    <div class="grid-2" style="margin-bottom:1rem;">
+      <div class="field-group">
+        <label>Persona Name</label>
+        <input type="text" id="persona-name" placeholder="e.g. Adventure Alex" maxlength="40">
+      </div>
+      <div class="field-group">
+        <label>Business / Brand</label>
+        <input type="text" id="brand-name" placeholder="e.g. Summit Outdoor Gear" maxlength="60">
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:1rem;">
+      <div class="field-group">
+        <label>Product or Service</label>
+        <input type="text" id="product" placeholder="e.g. hiking backpacks" maxlength="60">
+      </div>
+      <div class="field-group">
+        <label>Persona Age Range</label>
+        <select id="persona-age">
+          <option value="">Select…</option>
+          <option>13–17 (Teen)</option>
+          <option>18–24 (Young Adult)</option>
+          <option>25–34 (Millennial)</option>
+          <option>35–44 (Gen X)</option>
+          <option>45–54</option>
+          <option>55–64</option>
+          <option>65+ (Senior)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:1rem;">
+      <div class="field-group">
+        <label>Top Values / Interests</label>
+        <input type="text" id="persona-values" placeholder="e.g. Sustainability, Adventure, Fitness" maxlength="80">
+      </div>
+      <div class="field-group">
+        <label>Primary Shopping Channel</label>
+        <select id="persona-channel">
+          <option value="">Select…</option>
+          <option>Primarily online</option>
+          <option>Primarily in-store</option>
+          <option>Mix of both</option>
+          <option>Mobile app first</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Main Pain Point</label>
+      <input type="text" id="persona-pain" placeholder="e.g. Can't find eco-friendly gear that's also durable and affordable" maxlength="120">
+    </div>
+
+    <div class="field-group">
+      <label>How They Research Before Buying</label>
+      <input type="text" id="persona-research" placeholder="e.g. YouTube reviews, Reddit forums, asks friends" maxlength="120">
+    </div>
+
+    <div class="hint">
+      💡 <strong>Don't have a persona yet?</strong> Complete Simulation 1 — Buyer Persona Builder — first. The more specific your persona details, the more useful your AI feedback will be here.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goStep(2)">Build Content Calendar →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Content Calendar -->
+  <div class="panel" id="panel-2">
+    <div class="panel-eyebrow">Step 2 of 4</div>
+    <div class="panel-title">Plan your<br><em>4-week calendar</em></div>
+    <div class="panel-desc">Click any cell to assign content. Each piece should be Owned, Earned, or Paid media. Think about what your persona actually wants to see on each platform — and when.</div>
+
+    <!-- Persona recap -->
+    <div class="persona-recap" id="persona-recap-display"></div>
+
+    <!-- Balance bar -->
+    <div class="balance-row">
+      <div class="balance-title">Digital Marketing Trifecta Balance</div>
+      <div class="balance-bar-wrap">
+        <div class="balance-seg" id="owned-seg" style="width:33%; background:var(--owned);">OWNED</div>
+        <div class="balance-seg" id="earned-seg" style="width:33%; background:var(--earned);">EARNED</div>
+        <div class="balance-seg" id="paid-seg" style="width:34%; background:var(--paid);">PAID</div>
+      </div>
+      <div class="balance-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--owned)"></div><span id="owned-count">0 Owned</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--earned)"></div><span id="earned-count">0 Earned</span></div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--paid)"></div><span id="paid-count">0 Paid</span></div>
+        <div class="legend-item" style="margin-left:auto;"><span id="total-count" style="color:var(--text-muted); font-size:0.78rem;">0 / 20 cells filled</span></div>
+      </div>
+    </div>
+
+    <!-- Calendar -->
+    <div class="calendar-wrap">
+      <div class="calendar-header">
+        <div class="cal-head">Platform</div>
+        <div class="cal-head">Week 1</div>
+        <div class="cal-head">Week 2</div>
+        <div class="cal-head">Week 3</div>
+        <div class="cal-head">Week 4</div>
+      </div>
+      <div id="calendar-body"></div>
+    </div>
+
+    <div class="hint" style="background:var(--owned-light); border-color:var(--owned-mid); color:var(--owned);">
+      🎯 A strong strategy uses all three media types. Try to fill at least 8–10 cells and include a mix of Owned, Earned, and Paid content.
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goStep(3)">Add Strategy Details →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Strategy Details -->
+  <div class="panel" id="panel-3">
+    <div class="panel-eyebrow">Step 3 of 4</div>
+    <div class="panel-title">Refine your<br><em>strategy</em></div>
+    <div class="panel-desc">Add the finishing details that turn a content calendar into a real strategy. These decisions will be evaluated alongside your calendar choices.</div>
+
+    <div class="strategy-card">
+      <div class="strategy-card-title">📅 Posting Frequency</div>
+      <div class="grid-3">
+        <div>
+          <label>Instagram / TikTok</label>
+          <div class="freq-grid">
+            <button class="freq-btn" data-group="freq-social" data-val="Daily">Daily</button>
+            <button class="freq-btn" data-group="freq-social" data-val="3x/week">3x/wk</button>
+            <button class="freq-btn" data-group="freq-social" data-val="Weekly">Weekly</button>
+            <button class="freq-btn" data-group="freq-social" data-val="Rarely">Rarely</button>
+          </div>
+        </div>
+        <div>
+          <label>Blog / Website</label>
+          <div class="freq-grid">
+            <button class="freq-btn" data-group="freq-blog" data-val="Weekly">Weekly</button>
+            <button class="freq-btn" data-group="freq-blog" data-val="Biweekly">Biweekly</button>
+            <button class="freq-btn" data-group="freq-blog" data-val="Monthly">Monthly</button>
+            <button class="freq-btn" data-group="freq-blog" data-val="Rarely">Rarely</button>
+          </div>
+        </div>
+        <div>
+          <label>Email Campaigns</label>
+          <div class="freq-grid">
+            <button class="freq-btn" data-group="freq-email" data-val="Weekly">Weekly</button>
+            <button class="freq-btn" data-group="freq-email" data-val="Biweekly">Biweekly</button>
+            <button class="freq-btn" data-group="freq-email" data-val="Monthly">Monthly</button>
+            <button class="freq-btn" data-group="freq-email" data-val="Rarely">Rarely</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-card-title">🎯 Content Goals</div>
+      <div class="grid-2">
+        <div class="field-group">
+          <label>Primary Goal for This Campaign</label>
+          <select id="primary-goal">
+            <option value="">Select…</option>
+            <option>Build brand awareness</option>
+            <option>Drive website traffic</option>
+            <option>Generate direct sales</option>
+            <option>Grow social following</option>
+            <option>Build email list</option>
+            <option>Increase customer loyalty</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Campaign Duration</label>
+          <select id="campaign-duration">
+            <option value="">Select…</option>
+            <option>4 weeks (this calendar)</option>
+            <option>8 weeks</option>
+            <option>3 months</option>
+            <option>Ongoing / evergreen</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-card-title">📣 Distribution Approach</div>
+      <div class="field-group">
+        <label>How will you reach your persona organically? (Earned Media)</label>
+        <textarea id="earned-strategy" placeholder="e.g. Partner with local outdoor influencers for gear reviews. Encourage customers to post UGC with our hashtag. Pitch to outdoor lifestyle blogs for product features." maxlength="400"></textarea>
+      </div>
+      <div class="field-group">
+        <label>What's your call-to-action (CTA) for this campaign?</label>
+        <input type="text" id="cta" placeholder="e.g. Shop now and get free shipping on your first order" maxlength="100">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(2)">← Back</button>
+      <button class="btn btn-primary" onclick="getFeedback()">Get AI Feedback →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 4: Feedback -->
+  <div class="panel" id="panel-4">
+    <div class="panel-eyebrow">Step 4 of 4</div>
+    <div class="panel-title">Your strategy<br><em>debrief</em></div>
+    <div class="panel-desc">Your AI content strategy coach has reviewed your calendar and decisions against your buyer persona. Read carefully — the feedback references your specific choices.</div>
+
+    <div class="score-row" id="score-row"></div>
+
+    <div class="feedback-wrap">
+      <div class="feedback-head">
+        <div class="coach-avatar">✍️</div>
+        <div>
+          <div class="coach-name">Content Strategy Coach</div>
+          <div class="coach-role">AI Feedback · Strand 2, Standards 1 & 2</div>
+        </div>
+      </div>
+      <div class="feedback-body" id="feedback-body">
+        <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+      </div>
+    </div>
+
+    <!-- Calendar summary in results -->
+    <div class="strategy-card">
+      <div class="strategy-card-title">📋 Your Calendar Summary</div>
+      <div id="results-summary"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goStep(3)">← Revise Strategy</button>
+      <button class="btn btn-outline" onclick="resetAll()">🔄 Start New Strategy</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Content Picker Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Choose Content</h3>
+    <div class="modal-sub" id="modal-sub">Select what you'll post this week</div>
+    <div class="modal-options" id="modal-options"></div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="modal-clear" onclick="clearSlot()">Clear this cell</button>
+      <button class="btn btn-outline" style="padding:0.5rem 1rem; font-size:0.82rem;" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
+const platforms = [
+  { id: 'instagram', label: 'Instagram', emoji: '📸', color: '#E1306C' },
+  { id: 'tiktok', label: 'TikTok', emoji: '🎵', color: '#010101' },
+  { id: 'blog', label: 'Blog/Website', emoji: '✍️', color: '#1A6B4A' },
+  { id: 'email', label: 'Email', emoji: '📧', color: '#1A3A6B' },
+  { id: 'youtube', label: 'YouTube', emoji: '▶️', color: '#FF0000' },
+];
+
+const contentOptions = [
+  { label: 'Blog Post', emoji: '📝', type: 'owned', desc: 'Original article on your site' },
+  { label: 'Product Photo', emoji: '📸', type: 'owned', desc: 'Branded product imagery' },
+  { label: 'How-To Video', emoji: '🎬', type: 'owned', desc: 'Tutorial or demo video' },
+  { label: 'Infographic', emoji: '📊', type: 'owned', desc: 'Visual data or tips' },
+  { label: 'Email Newsletter', emoji: '📧', type: 'owned', desc: 'Curated content to subscribers' },
+  { label: 'Podcast Episode', emoji: '🎙️', type: 'owned', desc: 'Audio content you produce' },
+  { label: 'UGC Repost', emoji: '🔁', type: 'earned', desc: 'Sharing customer content' },
+  { label: 'Influencer Review', emoji: '⭐', type: 'earned', desc: 'Partner creator content' },
+  { label: 'Press Mention', emoji: '📰', type: 'earned', desc: 'Media coverage or feature' },
+  { label: 'Customer Review', emoji: '💬', type: 'earned', desc: 'Sharing testimonials' },
+  { label: 'Viral Challenge', emoji: '🔥', type: 'earned', desc: 'User-driven trend content' },
+  { label: 'Social Ad', emoji: '💰', type: 'paid', desc: 'Promoted paid placement' },
+  { label: 'Search Ad (PPC)', emoji: '🔍', type: 'paid', desc: 'Pay-per-click search ad' },
+  { label: 'Sponsored Post', emoji: '📣', type: 'paid', desc: 'Boosted or sponsored content' },
+  { label: 'Display Banner', emoji: '🖼️', type: 'paid', desc: 'Visual banner advertising' },
+  { label: 'Retargeting Ad', emoji: '🎯', type: 'paid', desc: 'Ad targeting past visitors' },
+];
+
+// Calendar state: platform x week
+const calendarData = {};
+platforms.forEach(p => {
+  calendarData[p.id] = { w1: null, w2: null, w3: null, w4: null };
+});
+
+let activeCell = null;
+
+function buildCalendar() {
+  const body = document.getElementById('calendar-body');
+  body.innerHTML = platforms.map(p => `
+    <div class="calendar-row">
+      <div class="cal-platform">
+        <div class="platform-dot" style="background:${p.color}"></div>
+        <span>${p.emoji} ${p.label}</span>
+      </div>
+      ${['w1','w2','w3','w4'].map(w => `
+        <div class="cal-cell">
+          <button class="content-slot" id="slot-${p.id}-${w}" onclick="openModal('${p.id}','${w}')">
+            + Add
+          </button>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function openModal(platformId, week) {
+  activeCell = { platformId, week };
+  const platform = platforms.find(p => p.id === platformId);
+  const current = calendarData[platformId][week];
+
+  document.getElementById('modal-title').textContent = `${platform.emoji} ${platform.label} — Week ${week.replace('w','')}`;
+  document.getElementById('modal-sub').textContent = 'What type of content will you post?';
+
+  document.getElementById('modal-options').innerHTML = contentOptions.map(opt => `
+    <div class="modal-option ${current?.label === opt.label ? 'selected ' + opt.type : ''}"
+         onclick="selectContent('${opt.label}', '${opt.type}', '${opt.emoji}')">
+      <span class="modal-option-icon">${opt.emoji}</span>
+      <div>
+        <div style="font-weight:600">${opt.label}</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); font-weight:400">${opt.desc}</div>
+      </div>
+      <span class="modal-option-type type-${opt.type}">${opt.type.toUpperCase()}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function selectContent(label, type, emoji) {
+  if (!activeCell) return;
+  const { platformId, week } = activeCell;
+  calendarData[platformId][week] = { label, type, emoji };
+  updateSlot(platformId, week);
+  updateBalance();
+  closeModal();
+}
+
+function clearSlot() {
+  if (!activeCell) return;
+  const { platformId, week } = activeCell;
+  calendarData[platformId][week] = null;
+  updateSlot(platformId, week);
+  updateBalance();
+  closeModal();
+}
+
+function updateSlot(platformId, week) {
+  const slot = document.getElementById(`slot-${platformId}-${week}`);
+  const data = calendarData[platformId][week];
+  if (data) {
+    slot.textContent = `${data.emoji} ${data.label}`;
+    slot.className = `content-slot filled ${data.type}`;
+  } else {
+    slot.textContent = '+ Add';
+    slot.className = 'content-slot';
+  }
+}
+
+function updateBalance() {
+  let owned = 0, earned = 0, paid = 0, total = 0;
+  platforms.forEach(p => {
+    ['w1','w2','w3','w4'].forEach(w => {
+      const d = calendarData[p.id][w];
+      if (d) {
+        total++;
+        if (d.type === 'owned') owned++;
+        else if (d.type === 'earned') earned++;
+        else if (d.type === 'paid') paid++;
+      }
+    });
+  });
+  const t = total || 1;
+  document.getElementById('owned-seg').style.width = (owned/t*100) + '%';
+  document.getElementById('earned-seg').style.width = (earned/t*100) + '%';
+  document.getElementById('paid-seg').style.width = (paid/t*100) + '%';
+  document.getElementById('owned-seg').textContent = owned > 0 ? 'OWNED' : '';
+  document.getElementById('earned-seg').textContent = earned > 0 ? 'EARNED' : '';
+  document.getElementById('paid-seg').textContent = paid > 0 ? 'PAID' : '';
+  document.getElementById('owned-count').textContent = `${owned} Owned`;
+  document.getElementById('earned-count').textContent = `${earned} Earned`;
+  document.getElementById('paid-count').textContent = `${paid} Paid`;
+  document.getElementById('total-count').textContent = `${total} / 20 cells filled`;
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  activeCell = null;
+}
+
+document.getElementById('modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Frequency buttons
+document.querySelectorAll('.freq-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const group = btn.dataset.group;
+    document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+function getFreq(group) {
+  const active = document.querySelector(`[data-group="${group}"].active`);
+  return active ? active.dataset.val : 'Not set';
+}
+
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i + 1 === n) s.classList.add('active');
+    if (i + 1 < n) s.classList.add('done');
+  });
+  if (n === 2) updatePersonaRecap();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updatePersonaRecap() {
+  const items = [
+    { label: 'Persona', val: document.getElementById('persona-name').value || '—' },
+    { label: 'Brand', val: document.getElementById('brand-name').value || '—' },
+    { label: 'Product', val: document.getElementById('product').value || '—' },
+    { label: 'Age', val: document.getElementById('persona-age').value || '—' },
+    { label: 'Values', val: document.getElementById('persona-values').value || '—' },
+    { label: 'Pain Point', val: document.getElementById('persona-pain').value || '—' },
+  ];
+  document.getElementById('persona-recap-display').innerHTML = items.map(i => `
+    <div class="recap-item">
+      <div class="recap-label">${i.label}</div>
+      <div class="recap-val">${i.val}</div>
+    </div>
+  `).join('');
+}
+
+function getCalendarSummary() {
+  const lines = [];
+  platforms.forEach(p => {
+    const weeks = ['w1','w2','w3','w4'].map(w => {
+      const d = calendarData[p.id][w];
+      return d ? `${d.emoji}${d.label}(${d.type})` : 'empty';
+    });
+    lines.push(`${p.label}: ${weeks.join(' | ')}`);
+  });
+  return lines.join('\n');
+}
+
+function getCalendarStats() {
+  let owned = 0, earned = 0, paid = 0, total = 0;
+  const usedContent = [];
+  platforms.forEach(p => {
+    ['w1','w2','w3','w4'].forEach(w => {
+      const d = calendarData[p.id][w];
+      if (d) {
+        total++;
+        if (d.type === 'owned') owned++;
+        else if (d.type === 'earned') earned++;
+        else if (d.type === 'paid') paid++;
+        if (!usedContent.includes(d.label)) usedContent.push(d.label);
+      }
+    });
+  });
+  return { owned, earned, paid, total, usedContent };
+}
+
+async function getFeedback() {
+  goStep(4);
+  const feedbackEl = document.getElementById('feedback-body');
+  feedbackEl.innerHTML = '<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  document.getElementById('score-row').innerHTML = '';
+
+  const stats = getCalendarStats();
+  const calSummary = getCalendarSummary();
+
+  // Results summary
+  document.getElementById('results-summary').innerHTML = `
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1rem;">
+      <div style="text-align:center; padding:1rem; background:var(--owned-light); border-radius:var(--radius-sm);">
+        <div style="font-size:1.5rem; font-weight:800; color:var(--owned);">${stats.owned}</div>
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--owned); font-weight:700;">Owned</div>
+      </div>
+      <div style="text-align:center; padding:1rem; background:var(--earned-light); border-radius:var(--radius-sm);">
+        <div style="font-size:1.5rem; font-weight:800; color:var(--earned);">${stats.earned}</div>
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--earned); font-weight:700;">Earned</div>
+      </div>
+      <div style="text-align:center; padding:1rem; background:var(--paid-light); border-radius:var(--radius-sm);">
+        <div style="font-size:1.5rem; font-weight:800; color:var(--paid);">${stats.paid}</div>
+        <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--paid); font-weight:700;">Paid</div>
+      </div>
+    </div>
+    <div style="font-size:0.82rem; color:var(--text-muted);">Content types used: ${stats.usedContent.join(', ') || 'None'}</div>
+  `;
+
+  const systemPrompt = `You are a friendly, expert content marketing teacher for a Utah high school Digital Marketing class (Strand 2). You review student content strategies and give specific feedback.
+
+Your response must start with this EXACT format:
+SCORES: Persona Alignment:[Great/OK/Needs Work] | Trifecta Balance:[Great/OK/Needs Work] | Platform Strategy:[Great/OK/Needs Work] | Earned Media:[Great/OK/Needs Work] | Overall:[Great/OK/Needs Work]
+
+Then write 4–5 paragraphs of warm, specific coaching feedback. Reference the student's actual calendar choices, persona details, and strategy decisions. Use Strand 2 vocabulary: owned media, earned media, paid media, digital marketing trifecta, content marketing, UGC, influencer marketing, branded content, curated content, viral content, CTAs, engagement.
+
+Specifically evaluate:
+1. Whether the content choices match the persona's age, values, research habits, and pain points
+2. Whether the trifecta (Owned/Earned/Paid) is well balanced
+3. Whether platform choices make sense for the persona
+4. Whether the earned media strategy is realistic and specific
+5. Whether the CTA is strong and actionable
+
+End with one specific challenge question. Tone: encouraging, professional, 11th-12th grade level. No markdown ** or ##.`;
+
+  const userPrompt = `Student Content Strategy Review:
+
+BUYER PERSONA:
+- Name: ${document.getElementById('persona-name').value || 'Not provided'}
+- Brand: ${document.getElementById('brand-name').value || 'Not provided'}
+- Product: ${document.getElementById('product').value || 'Not provided'}
+- Age: ${document.getElementById('persona-age').value || 'Not provided'}
+- Values: ${document.getElementById('persona-values').value || 'Not provided'}
+- Shopping Channel: ${document.getElementById('persona-channel').value || 'Not provided'}
+- Pain Point: ${document.getElementById('persona-pain').value || 'Not provided'}
+- Research Habits: ${document.getElementById('persona-research').value || 'Not provided'}
+
+4-WEEK CONTENT CALENDAR:
+${calSummary}
+
+TRIFECTA BALANCE:
+- Owned: ${stats.owned} pieces (${Math.round(stats.owned/Math.max(stats.total,1)*100)}%)
+- Earned: ${stats.earned} pieces (${Math.round(stats.earned/Math.max(stats.total,1)*100)}%)
+- Paid: ${stats.paid} pieces (${Math.round(stats.paid/Math.max(stats.total,1)*100)}%)
+- Total cells filled: ${stats.total} / 20
+
+STRATEGY DETAILS:
+- Social Media Frequency: ${getFreq('freq-social')}
+- Blog Frequency: ${getFreq('freq-blog')}
+- Email Frequency: ${getFreq('freq-email')}
+- Primary Goal: ${document.getElementById('primary-goal').value || 'Not selected'}
+- Campaign Duration: ${document.getElementById('campaign-duration').value || 'Not selected'}
+- Earned Media Strategy: ${document.getElementById('earned-strategy').value || 'Not provided'}
+- Call-to-Action: ${document.getElementById('cta').value || 'Not provided'}`;
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Could not generate feedback. Please try again.';
+
+    const scoreMatch = text.match(/SCORES:(.+)/);
+    let mainText = text;
+
+    if (scoreMatch) {
+      mainText = mainText.replace(scoreMatch[0], '').trim();
+      const parts = scoreMatch[1].split('|');
+      document.getElementById('score-row').innerHTML = parts.map(p => {
+        const [label, rating] = p.split(':').map(s => s.trim());
+        let cls = rating === 'Great' ? 'great' : rating === 'OK' ? 'ok' : 'needs';
+        return `<span class="score-chip ${cls}">${label}: ${rating}</span>`;
+      }).join('');
+    }
+
+    feedbackEl.textContent = mainText;
+
+  } catch (err) {
+    feedbackEl.textContent = 'There was a problem connecting to the AI. Please check your connection and try again.\n\nError: ' + err.message;
+  }
+}
+
+function resetAll() {
+  if (!confirm('Start a new strategy? Your current work will be cleared.')) return;
+  platforms.forEach(p => {
+    calendarData[p.id] = { w1: null, w2: null, w3: null, w4: null };
+  });
+  buildCalendar();
+  updateBalance();
+  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  document.querySelectorAll('.freq-btn.active').forEach(b => b.classList.remove('active'));
+  goStep(1);
+}
+
+buildCalendar();
+updateBalance();
+</script>
+</body>
+</html>
