@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPI Campaign Simulator – Digital Marketing</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0A0E1A;
+  --surface: #111827;
+  --surface2: #1A2235;
+  --surface3: #222d42;
+  --border: #2A3550;
+  --text: #E8EDF8;
+  --text-muted: #6B7A99;
+  --text-dim: #3D4F70;
+  --green: #00E5A0;
+  --green-dim: rgba(0,229,160,0.12);
+  --green-mid: rgba(0,229,160,0.4);
+  --blue: #4D9FFF;
+  --blue-dim: rgba(77,159,255,0.12);
+  --amber: #FFB830;
+  --amber-dim: rgba(255,184,48,0.12);
+  --coral: #FF5E7D;
+  --coral-dim: rgba(255,94,125,0.12);
+  --purple: #A78BFA;
+  --purple-dim: rgba(167,139,250,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --mono: 'Space Mono', monospace;
+  --display: 'Syne', sans-serif;
+}
+
+body {
+  font-family: var(--display);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(77,159,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(77,159,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+header {
+  position: relative;
+  z-index: 1;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,14,26,0.8);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.logo-icon {
+  width: 36px; height: 36px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+}
+.logo-text {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-top: 0.1rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.strand-badge {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  color: var(--green);
+  border: 1px solid var(--green-mid);
+  padding: 0.3rem 0.75rem;
+  border-radius: 100px;
+  letter-spacing: 0.08em;
+}
+.budget-display {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--amber);
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* Phase indicator */
+.phase-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 2.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.phase-step {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  cursor: default;
+  transition: all 0.3s;
+}
+.phase-step:last-child { border-right: none; }
+.phase-step.active {
+  background: var(--green-dim);
+  color: var(--green);
+}
+.phase-step.done {
+  background: rgba(0,229,160,0.05);
+  color: rgba(0,229,160,0.5);
+}
+.phase-step .step-num {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  display: block;
+  margin-bottom: 0.2rem;
+  opacity: 0.6;
+}
+
+/* Panels */
+.panel {
+  display: none;
+  animation: fadeIn 0.4s ease;
+}
+.panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Section label */
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-label::before {
+  content: '';
+  width: 20px; height: 1px;
+  background: var(--border);
+}
+
+.panel-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+.panel-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.card-title .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+
+/* Sliders */
+.slider-row {
+  margin-bottom: 1.25rem;
+}
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.slider-label {
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 600;
+}
+.slider-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.slider-value {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--green);
+  font-weight: 700;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--surface3);
+  border-radius: 2px;
+  outline: none;
+  margin-top: 0.5rem;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--green);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0,229,160,0.5);
+}
+
+/* Toggle chips */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.chip {
+  padding: 0.35rem 0.85rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: var(--surface2);
+  transition: all 0.15s;
+  user-select: none;
+}
+.chip:hover { border-color: var(--text-dim); color: var(--text); }
+.chip.sel-green { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+.chip.sel-blue { background: var(--blue-dim); border-color: var(--blue); color: var(--blue); }
+.chip.sel-amber { background: var(--amber-dim); border-color: var(--amber); color: var(--amber); }
+.chip.sel-purple { background: var(--purple-dim); border-color: var(--purple); color: var(--purple); }
+
+/* Grid layouts */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+
+/* Budget bar */
+.budget-bar-wrap {
+  background: var(--surface2);
+  border-radius: 100px;
+  height: 6px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+.budget-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--green), var(--blue));
+  transition: width 0.3s ease;
+}
+.budget-bar-fill.over { background: linear-gradient(90deg, var(--amber), var(--coral)); }
+
+/* KPI metric cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.kpi-card.awareness::before { background: var(--blue); }
+.kpi-card.engagement::before { background: var(--green); }
+.kpi-card.closing::before { background: var(--amber); }
+.kpi-card.delight::before { background: var(--purple); }
+
+.kpi-label {
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.kpi-value {
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+.kpi-value.awareness { color: var(--blue); }
+.kpi-value.engagement { color: var(--green); }
+.kpi-value.closing { color: var(--amber); }
+.kpi-value.delight { color: var(--purple); }
+.kpi-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+/* Mini bar inside KPI card */
+.kpi-bar {
+  margin-top: 0.75rem;
+  background: var(--surface2);
+  border-radius: 100px;
+  height: 3px;
+  overflow: hidden;
+}
+.kpi-bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 1s ease;
+}
+.awareness .kpi-bar-fill { background: var(--blue); }
+.engagement .kpi-bar-fill { background: var(--green); }
+.closing .kpi-bar-fill { background: var(--amber); }
+.delight .kpi-bar-fill { background: var(--purple); }
+
+/* Funnel visual */
+.funnel-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+.funnel-stage {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.funnel-bar-container {
+  flex: 1;
+  height: 36px;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+.funnel-bar-inner {
+  height: 100%;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  white-space: nowrap;
+}
+.funnel-stage-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 90px;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+.funnel-stage-val {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  width: 70px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+/* Chart */
+.chart-wrap {
+  height: 140px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding-top: 1rem;
+}
+.chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.chart-bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  transition: height 1s ease;
+  min-height: 2px;
+}
+.chart-label {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+.btn-primary {
+  background: var(--green);
+  color: var(--bg);
+}
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-primary:disabled { background: var(--surface3); color: var(--text-muted); cursor: not-allowed; transform: none; }
+.btn-outline {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--text-muted); }
+.btn-row { display: flex; gap: 0.75rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; }
+
+/* Feedback */
+.feedback-terminal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.terminal-header {
+  background: var(--surface2);
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-title {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+  letter-spacing: 0.05em;
+}
+.terminal-body {
+  padding: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--text);
+  min-height: 120px;
+  white-space: pre-wrap;
+}
+.terminal-body .prompt {
+  color: var(--green);
+  margin-right: 0.5rem;
+}
+
+/* Score badges */
+.score-grid {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+.score-badge {
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.score-badge.high { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-mid); }
+.score-badge.mid { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(255,184,48,0.3); }
+.score-badge.low { background: var(--coral-dim); color: var(--coral); border: 1px solid rgba(255,94,125,0.3); }
+
+.typing-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 1.2s infinite;
+  margin: 0 2px;
+  vertical-align: middle;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes blink { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
+
+/* Scenario card */
+.scenario-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.scenario-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.scenario-name {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 0.25rem;
+}
+.scenario-brief {
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.scenario-pills {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+.scenario-pill {
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  background: var(--surface3);
+  color: var(--text-muted);
+}
+
+/* Insight rows */
+.insight-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+.insight-row:last-child { border-bottom: none; }
+.insight-icon { flex-shrink: 0; font-size: 1rem; margin-top: 0.1rem; }
+
+select, input[type="text"] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  font-family: var(--display);
+  font-size: 0.88rem;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+select:focus, input:focus { border-color: var(--green); }
+select option { background: var(--surface); }
+
+label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 640px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .phase-bar { display: none; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📊</div>
+    <div>
+      <div class="logo-text">KPI Campaign Simulator</div>
+      <div class="logo-sub">DIGITAL MARKETING · STRAND 3</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="strand-badge">STD 1–4 COVERAGE</span>
+    <span class="budget-display">BUDGET: $<span id="header-budget">5,000</span></span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Phase Bar -->
+  <div class="phase-bar">
+    <div class="phase-step active" id="step-1"><span class="step-num">01</span>SETUP</div>
+    <div class="phase-step" id="step-2"><span class="step-num">02</span>STRATEGY</div>
+    <div class="phase-step" id="step-3"><span class="step-num">03</span>RESULTS</div>
+    <div class="phase-step" id="step-4"><span class="step-num">04</span>ANALYSIS</div>
+  </div>
+
+  <!-- PANEL 1: Setup -->
+  <div class="panel active" id="panel-1">
+    <div class="section-label">Campaign Setup</div>
+    <div class="panel-title">Choose your scenario</div>
+    <div class="panel-desc">You're the digital marketing manager. Pick a business scenario, name your campaign, and set your total budget. Your decisions will determine how each KPI performs across the marketing funnel.</div>
+
+    <div class="grid-2" style="margin-bottom:1.25rem;">
+      <div>
+        <label>Business Scenario</label>
+        <select id="scenario-select">
+          <option value="cafe">☕ Local Coffee Shop — new downtown location</option>
+          <option value="app">📱 Fitness App — launching a premium tier</option>
+          <option value="clothing">👗 Sustainable Clothing Brand — new collection</option>
+          <option value="tutoring">📚 Online Tutoring Service — back to school push</option>
+          <option value="custom">✏️ Custom — I'll enter my own</option>
+        </select>
+      </div>
+      <div>
+        <label>Campaign Name</label>
+        <input type="text" id="campaign-name" placeholder="e.g. Spring Launch 2026" maxlength="50">
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem;">
+      <div class="slider-header">
+        <div>
+          <div class="slider-label">Total Campaign Budget</div>
+          <div class="slider-desc">How much are you spending across all channels?</div>
+        </div>
+        <div class="slider-value">$<span id="budget-val">5000</span></div>
+      </div>
+      <input type="range" id="budget-slider" min="1000" max="20000" step="500" value="5000">
+    </div>
+
+    <div id="scenario-preview" class="scenario-card">
+      <div class="scenario-icon">☕</div>
+      <div>
+        <div class="scenario-name">Local Coffee Shop</div>
+        <div class="scenario-brief">A beloved neighborhood café is opening a second downtown location. They need to build awareness fast, drive foot traffic, and convert new customers into regulars.</div>
+        <div class="scenario-pills">
+          <span class="scenario-pill">B2C</span>
+          <span class="scenario-pill">LOCAL MARKET</span>
+          <span class="scenario-pill">HIGH COMPETITION</span>
+          <span class="scenario-pill">LOYALTY FOCUS</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="custom-fields" style="display:none; margin-bottom:1.5rem;">
+      <div class="grid-2">
+        <div>
+          <label>Business Description</label>
+          <input type="text" id="custom-desc" placeholder="What does your business do?" maxlength="80">
+        </div>
+        <div>
+          <label>Marketing Goal</label>
+          <select id="custom-goal">
+            <option>Build brand awareness</option>
+            <option>Drive online sales</option>
+            <option>Generate leads</option>
+            <option>Increase foot traffic</option>
+            <option>Launch a new product</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goToPanel(2)">Set Strategy →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Strategy -->
+  <div class="panel" id="panel-2">
+    <div class="section-label">Campaign Strategy</div>
+    <div class="panel-title">Allocate your budget</div>
+    <div class="panel-desc">Distribute your $<span id="strategy-budget">5,000</span> across the four funnel stages. Each decision affects your KPIs. There's no perfect answer — trade-offs are part of the game.</div>
+
+    <!-- Budget remaining -->
+    <div class="card" style="margin-bottom:1.25rem;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <span style="font-size:0.82rem; font-weight:700;">Budget Allocated</span>
+        <span style="font-family:var(--mono); font-size:0.85rem;" id="allocated-display"><span id="allocated-val">0</span> / $<span id="total-budget-display">5000</span></span>
+      </div>
+      <div class="budget-bar-wrap">
+        <div class="budget-bar-fill" id="budget-fill" style="width:0%"></div>
+      </div>
+      <div style="font-family:var(--mono); font-size:0.7rem; color:var(--text-muted); margin-top:0.5rem;" id="budget-remaining-label">$5,000 remaining</div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Awareness -->
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:var(--blue)"></div>🔵 AWARENESS — Top of Funnel</div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">SEO Investment</div>
+              <div class="slider-desc">Organic search optimization</div>
+            </div>
+            <div class="slider-value">$<span id="seo-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="seo" min="0" max="3000" step="100" value="0">
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Display / Banner Ads</div>
+              <div class="slider-desc">Paid visual advertising</div>
+            </div>
+            <div class="slider-value">$<span id="display-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="display" min="0" max="3000" step="100" value="0">
+        </div>
+        <div style="margin-top:0.75rem;">
+          <div class="slider-label" style="margin-bottom:0.5rem;">Content Type</div>
+          <div class="chip-group" id="awareness-content">
+            <span class="chip" data-color="blue" data-group="awareness-content">Blog Posts</span>
+            <span class="chip" data-color="blue" data-group="awareness-content">Video Ads</span>
+            <span class="chip" data-color="blue" data-group="awareness-content">Infographics</span>
+            <span class="chip" data-color="blue" data-group="awareness-content">Podcasts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engagement -->
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:var(--green)"></div>🟢 ENGAGEMENT — Mid Funnel</div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Social Media</div>
+              <div class="slider-desc">Paid social + influencers</div>
+            </div>
+            <div class="slider-value">$<span id="social-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="social" min="0" max="3000" step="100" value="0">
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Email Marketing</div>
+              <div class="slider-desc">Campaigns & automation</div>
+            </div>
+            <div class="slider-value">$<span id="email-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="email" min="0" max="3000" step="100" value="0">
+        </div>
+        <div style="margin-top:0.75rem;">
+          <div class="slider-label" style="margin-bottom:0.5rem;">Engagement Strategy</div>
+          <div class="chip-group" id="engagement-content">
+            <span class="chip" data-color="green" data-group="engagement-content">UGC Campaign</span>
+            <span class="chip" data-color="green" data-group="engagement-content">Contests</span>
+            <span class="chip" data-color="green" data-group="engagement-content">Influencers</span>
+            <span class="chip" data-color="green" data-group="engagement-content">Cross-Promo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closing -->
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:var(--amber)"></div>🟡 CLOSING — Bottom of Funnel</div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">PPC / Search Ads</div>
+              <div class="slider-desc">Pay-per-click campaigns</div>
+            </div>
+            <div class="slider-value">$<span id="ppc-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="ppc" min="0" max="3000" step="100" value="0">
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Retargeting</div>
+              <div class="slider-desc">Remarketing to warm leads</div>
+            </div>
+            <div class="slider-value">$<span id="retarget-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="retarget" min="0" max="3000" step="100" value="0">
+        </div>
+        <div style="margin-top:0.75rem;">
+          <div class="slider-label" style="margin-bottom:0.5rem;">Conversion Tool</div>
+          <div class="chip-group" id="closing-content">
+            <span class="chip" data-color="amber" data-group="closing-content">Landing Pages</span>
+            <span class="chip" data-color="amber" data-group="closing-content">A/B Testing</span>
+            <span class="chip" data-color="amber" data-group="closing-content">Discount Codes</span>
+            <span class="chip" data-color="amber" data-group="closing-content">Live Chat</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delight -->
+      <div class="card">
+        <div class="card-title"><div class="dot" style="background:var(--purple)"></div>🟣 DELIGHT — Retention</div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Loyalty Program</div>
+              <div class="slider-desc">Rewards & retention</div>
+            </div>
+            <div class="slider-value">$<span id="loyalty-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="loyalty" min="0" max="3000" step="100" value="0">
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <div>
+              <div class="slider-label">Review Generation</div>
+              <div class="slider-desc">Social proof campaigns</div>
+            </div>
+            <div class="slider-value">$<span id="reviews-val">0</span></div>
+          </div>
+          <input type="range" class="budget-slider" id="reviews" min="0" max="3000" step="100" value="0">
+        </div>
+        <div style="margin-top:0.75rem;">
+          <div class="slider-label" style="margin-bottom:0.5rem;">Delight Strategy</div>
+          <div class="chip-group" id="delight-content">
+            <span class="chip" data-color="purple" data-group="delight-content">Push Notifications</span>
+            <span class="chip" data-color="purple" data-group="delight-content">Personalization</span>
+            <span class="chip" data-color="purple" data-group="delight-content">VIP Access</span>
+            <span class="chip" data-color="purple" data-group="delight-content">Survey Feedback</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goToPanel(1)">← Back</button>
+      <button class="btn btn-primary" id="run-btn" onclick="runCampaign()">▶ Run Campaign</button>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Results -->
+  <div class="panel" id="panel-3">
+    <div class="section-label">Campaign Results</div>
+    <div class="panel-title">Your KPI Dashboard</div>
+    <div class="panel-desc">Here's how your campaign performed. Each metric maps to a standard from Strand 3. Study the patterns — where did budget allocation pay off, and where did you leave opportunities on the table?</div>
+
+    <!-- KPI Cards -->
+    <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--blue); letter-spacing:0.08em;">🔵 AWARENESS KPIs</div>
+    <div class="kpi-grid" id="awareness-kpis" style="margin-bottom:1.5rem;"></div>
+
+    <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--green); letter-spacing:0.08em;">🟢 ENGAGEMENT KPIs</div>
+    <div class="kpi-grid" id="engagement-kpis" style="margin-bottom:1.5rem;"></div>
+
+    <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--amber); letter-spacing:0.08em;">🟡 CLOSING KPIs</div>
+    <div class="kpi-grid" id="closing-kpis" style="margin-bottom:1.5rem;"></div>
+
+    <div style="margin-bottom:0.5rem; font-size:0.75rem; font-weight:700; color:var(--purple); letter-spacing:0.08em;">🟣 DELIGHT KPIs</div>
+    <div class="kpi-grid" id="delight-kpis" style="margin-bottom:2rem;"></div>
+
+    <!-- Funnel visualization -->
+    <div class="card">
+      <div class="card-title">Marketing Funnel Flow</div>
+      <div class="funnel-wrap" id="funnel-viz"></div>
+    </div>
+
+    <!-- Channel chart -->
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-title">Budget vs. Performance by Channel</div>
+      <div class="chart-wrap" id="channel-chart"></div>
+      <div style="font-family:var(--mono); font-size:0.65rem; color:var(--text-muted); margin-top:0.75rem; text-align:center;">
+        GREEN = conversion contribution · BLUE = awareness contribution
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goToPanel(2)">← Adjust Strategy</button>
+      <button class="btn btn-primary" onclick="getAIAnalysis()">Get AI Analysis →</button>
+    </div>
+  </div>
+
+  <!-- PANEL 4: Analysis -->
+  <div class="panel" id="panel-4">
+    <div class="section-label">AI Campaign Analysis</div>
+    <div class="panel-title">Marketing Coach Debrief</div>
+    <div class="panel-desc">Your AI marketing coach has reviewed your campaign data. Read the analysis carefully — it references your actual KPI numbers and strategy decisions.</div>
+
+    <div class="score-grid" id="analysis-scores"></div>
+
+    <div class="feedback-terminal">
+      <div class="terminal-header">
+        <div class="terminal-dot" style="background:#FF5E7D"></div>
+        <div class="terminal-dot" style="background:#FFB830"></div>
+        <div class="terminal-dot" style="background:#00E5A0"></div>
+        <div class="terminal-title">MARKETING_COACH.AI — STRAND 3 ANALYSIS</div>
+      </div>
+      <div class="terminal-body" id="analysis-text">
+        <span class="prompt">$</span> Awaiting campaign data...
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">📌 Key Insights</div>
+      <div id="insights-list"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="goToPanel(3)">← View Results</button>
+      <button class="btn btn-outline" onclick="resetSim()">🔄 Run New Campaign</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const WORKER_URL = "https://digitalmarketing.robert-nielson14.workers.dev";
+
+const scenarios = {
+  cafe: {
+    icon: '☕', name: 'Local Coffee Shop',
+    brief: 'A beloved neighborhood café is opening a second downtown location. They need to build awareness fast, drive foot traffic, and convert new customers into regulars.',
+    pills: ['B2C','LOCAL MARKET','HIGH COMPETITION','LOYALTY FOCUS'],
+    avgOrderValue: 8, customerLifespan: 3
+  },
+  app: {
+    icon: '📱', name: 'Fitness App',
+    brief: 'A fitness app is launching a $14.99/month premium tier. Goal: convert free users and attract new subscribers through digital channels.',
+    pills: ['B2C','SUBSCRIPTION MODEL','NATIONAL','HIGH CLV POTENTIAL'],
+    avgOrderValue: 14.99, customerLifespan: 18
+  },
+  clothing: {
+    icon: '👗', name: 'Sustainable Clothing Brand',
+    brief: 'An eco-conscious clothing brand is launching their spring collection. They need to reach sustainability-minded consumers and build brand loyalty.',
+    pills: ['B2C','E-COMMERCE','NICHE AUDIENCE','BRAND-DRIVEN'],
+    avgOrderValue: 75, customerLifespan: 24
+  },
+  tutoring: {
+    icon: '📚', name: 'Online Tutoring Service',
+    brief: 'An online tutoring platform is running a back-to-school campaign targeting parents of middle and high school students.',
+    pills: ['B2C','SEASONAL','PARENT AUDIENCE','TRUST-DRIVEN'],
+    avgOrderValue: 120, customerLifespan: 9
+  },
+  custom: {
+    icon: '✏️', name: 'Custom Business',
+    brief: 'Your own business scenario.',
+    pills: ['CUSTOM'],
+    avgOrderValue: 50, customerLifespan: 12
+  }
+};
+
+let totalBudget = 5000;
+let currentResults = {};
+
+// Budget slider
+document.getElementById('budget-slider').addEventListener('input', function() {
+  totalBudget = parseInt(this.value);
+  document.getElementById('budget-val').textContent = totalBudget.toLocaleString();
+  document.getElementById('header-budget').textContent = totalBudget.toLocaleString();
+  document.getElementById('strategy-budget').textContent = totalBudget.toLocaleString();
+  document.getElementById('total-budget-display').textContent = totalBudget.toLocaleString();
+  updateBudgetBar();
+});
+
+// Scenario selector
+document.getElementById('scenario-select').addEventListener('change', function() {
+  const s = scenarios[this.value];
+  const preview = document.getElementById('scenario-preview');
+  preview.querySelector('.scenario-icon').textContent = s.icon;
+  preview.querySelector('.scenario-name').textContent = s.name;
+  preview.querySelector('.scenario-brief').textContent = s.brief;
+  preview.querySelector('.scenario-pills').innerHTML = s.pills.map(p => `<span class="scenario-pill">${p}</span>`).join('');
+  document.getElementById('custom-fields').style.display = this.value === 'custom' ? 'block' : 'none';
+});
+
+// Channel sliders
+const channels = ['seo','display','social','email','ppc','retarget','loyalty','reviews'];
+channels.forEach(ch => {
+  document.getElementById(ch).addEventListener('input', function() {
+    document.getElementById(`${ch}-val`).textContent = parseInt(this.value).toLocaleString();
+    updateBudgetBar();
+  });
+});
+
+function getAllocated() {
+  return channels.reduce((sum, ch) => sum + parseInt(document.getElementById(ch).value), 0);
+}
+
+function updateBudgetBar() {
+  const allocated = getAllocated();
+  const pct = Math.min((allocated / totalBudget) * 100, 100);
+  const fill = document.getElementById('budget-fill');
+  fill.style.width = pct + '%';
+  fill.className = 'budget-bar-fill' + (allocated > totalBudget ? ' over' : '');
+  document.getElementById('allocated-val').textContent = '$' + allocated.toLocaleString();
+  const remaining = totalBudget - allocated;
+  document.getElementById('budget-remaining-label').textContent =
+    remaining >= 0 ? `$${remaining.toLocaleString()} remaining` : `⚠ $${Math.abs(remaining).toLocaleString()} over budget`;
+}
+
+// Chips
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const color = chip.dataset.color;
+    chip.classList.toggle(`sel-${color}`);
+  });
+});
+
+function getSelectedChips(groupId) {
+  return Array.from(document.querySelectorAll(`#${groupId} .chip`))
+    .filter(c => c.className.includes('sel-'))
+    .map(c => c.textContent);
+}
+
+function goToPanel(n) {
+  document.querySelectorAll('.panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === n);
+  });
+  document.querySelectorAll('.phase-step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i + 1 === n) s.classList.add('active');
+    if (i + 1 < n) s.classList.add('done');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function runCampaign() {
+  const seo = parseInt(document.getElementById('seo').value);
+  const display = parseInt(document.getElementById('display').value);
+  const social = parseInt(document.getElementById('social').value);
+  const email = parseInt(document.getElementById('email').value);
+  const ppc = parseInt(document.getElementById('ppc').value);
+  const retarget = parseInt(document.getElementById('retarget').value);
+  const loyalty = parseInt(document.getElementById('loyalty').value);
+  const reviews = parseInt(document.getElementById('reviews').value);
+
+  const scenarioKey = document.getElementById('scenario-select').value;
+  const scenario = scenarios[scenarioKey];
+  const allocated = getAllocated();
+  const efficiency = Math.min(allocated / totalBudget, 1);
+
+  // Awareness KPIs
+  const awarenessSpend = seo + display;
+  const impressions = Math.round((awarenessSpend * 180 + seo * 120) * (0.7 + Math.random() * 0.6));
+  const uniqueVisitors = Math.round(impressions * (0.04 + seo/totalBudget * 0.08));
+  const pageRank = Math.min(Math.round(3 + seo/500 * 2 + Math.random()), 10);
+  const pageLikes = Math.round(display * 1.2 + social * 0.8 + Math.random() * 200);
+
+  // Engagement KPIs
+  const engageSpend = social + email;
+  const bounceRate = Math.max(20, Math.round(65 - engageSpend/totalBudget*40 - (getSelectedChips('engagement-content').length * 3) + Math.random()*10));
+  const engagementRate = Math.min(Math.round(2 + engageSpend/totalBudget*18 + Math.random()*5), 35);
+  const shares = Math.round(social * 0.4 + uniqueVisitors * (engagementRate/200));
+  const pageViews = Math.round(uniqueVisitors * (1.5 + engagementRate/30));
+
+  // Closing KPIs
+  const closeSpend = ppc + retarget;
+  const conversionRate = Math.min(Math.round((1 + closeSpend/totalBudget*12 + retarget/totalBudget*8 + (getSelectedChips('closing-content').length)) * 10) / 10, 18);
+  const newCustomers = Math.round(uniqueVisitors * (conversionRate / 100));
+  const cac = newCustomers > 0 ? Math.round(allocated / newCustomers) : 999;
+  const revenue = Math.round(newCustomers * scenario.avgOrderValue);
+  const roi = Math.round(((revenue - allocated) / Math.max(allocated, 1)) * 100);
+
+  // Delight KPIs
+  const delightSpend = loyalty + reviews;
+  const nps = Math.round(20 + delightSpend/totalBudget*60 + Math.random()*15);
+  const clv = Math.round(scenario.avgOrderValue * (scenario.customerLifespan + delightSpend/500));
+  const reviewScore = Math.min((3.5 + delightSpend/totalBudget*1.4 + Math.random()*0.3).toFixed(1), 5.0);
+  const repeatRate = Math.round(15 + delightSpend/totalBudget*45 + Math.random()*10);
+
+  currentResults = {
+    scenarioKey, scenario, allocated, totalBudget,
+    spends: { seo, display, social, email, ppc, retarget, loyalty, reviews },
+    awarenessContent: getSelectedChips('awareness-content'),
+    engagementContent: getSelectedChips('engagement-content'),
+    closingContent: getSelectedChips('closing-content'),
+    delightContent: getSelectedChips('delight-content'),
+    kpis: {
+      impressions, uniqueVisitors, pageRank, pageLikes,
+      bounceRate, engagementRate, shares, pageViews,
+      conversionRate, newCustomers, cac, revenue, roi,
+      nps, clv, reviewScore, repeatRate
+    }
+  };
+
+  renderResults();
+  goToPanel(3);
+}
+
+function renderResults() {
+  const k = currentResults.kpis;
+
+  // Awareness KPIs
+  document.getElementById('awareness-kpis').innerHTML = [
+    { label: 'IMPRESSIONS', val: k.impressions.toLocaleString(), sub: 'Total ad views', bar: Math.min(k.impressions/50000*100,100) },
+    { label: 'UNIQUE VISITORS', val: k.uniqueVisitors.toLocaleString(), sub: 'Site visits', bar: Math.min(k.uniqueVisitors/5000*100,100) },
+    { label: 'PAGE RANK', val: `#${k.pageRank}`, sub: 'Search position (1=best)', bar: (10-k.pageRank)/9*100 },
+    { label: 'PAGE LIKES', val: k.pageLikes.toLocaleString(), sub: 'Social follows', bar: Math.min(k.pageLikes/2000*100,100) },
+  ].map(m => kpiCard(m, 'awareness')).join('');
+
+  // Engagement KPIs
+  document.getElementById('engagement-kpis').innerHTML = [
+    { label: 'BOUNCE RATE', val: k.bounceRate + '%', sub: 'Left after 1 page (lower=better)', bar: 100-k.bounceRate },
+    { label: 'ENGAGEMENT RATE', val: k.engagementRate + '%', sub: 'Interactions / reach', bar: k.engagementRate/35*100 },
+    { label: 'SHARES', val: k.shares.toLocaleString(), sub: 'Content shares', bar: Math.min(k.shares/1000*100,100) },
+    { label: 'PAGE VIEWS', val: k.pageViews.toLocaleString(), sub: 'Total pages viewed', bar: Math.min(k.pageViews/10000*100,100) },
+  ].map(m => kpiCard(m, 'engagement')).join('');
+
+  // Closing KPIs
+  document.getElementById('closing-kpis').innerHTML = [
+    { label: 'CONVERSION RATE', val: k.conversionRate + '%', sub: 'Visitors who bought', bar: k.conversionRate/18*100 },
+    { label: 'NEW CUSTOMERS', val: k.newCustomers.toLocaleString(), sub: 'Paying customers', bar: Math.min(k.newCustomers/500*100,100) },
+    { label: 'CAC', val: '$'+k.cac, sub: 'Cost per new customer', bar: Math.max(0,100-k.cac/200*100) },
+    { label: 'REVENUE', val: '$'+k.revenue.toLocaleString(), sub: 'Campaign revenue', bar: Math.min(k.revenue/currentResults.totalBudget*50,100) },
+  ].map(m => kpiCard(m, 'closing')).join('');
+
+  // Delight KPIs
+  document.getElementById('delight-kpis').innerHTML = [
+    { label: 'NET PROMOTER SCORE', val: k.nps, sub: 'Likelihood to recommend', bar: k.nps },
+    { label: 'CLV', val: '$'+k.clv, sub: 'Customer lifetime value', bar: Math.min(k.clv/500*100,100) },
+    { label: 'REVIEW SCORE', val: k.reviewScore + '/5', sub: 'Average rating', bar: k.reviewScore/5*100 },
+    { label: 'REPEAT RATE', val: k.repeatRate + '%', sub: 'Customers who return', bar: k.repeatRate },
+  ].map(m => kpiCard(m, 'delight')).join('');
+
+  // Funnel
+  const total = currentResults.allocated;
+  document.getElementById('funnel-viz').innerHTML = [
+    { label: 'AWARENESS', val: currentResults.kpis.impressions.toLocaleString() + ' impressions', pct: 100, color: 'var(--blue)' },
+    { label: 'ENGAGEMENT', val: currentResults.kpis.engagementRate + '% engaged', pct: currentResults.kpis.engagementRate * 3, color: 'var(--green)' },
+    { label: 'CLOSING', val: currentResults.kpis.conversionRate + '% converted', pct: currentResults.kpis.conversionRate * 5, color: 'var(--amber)' },
+    { label: 'DELIGHT', val: 'NPS ' + currentResults.kpis.nps, pct: currentResults.kpis.nps, color: 'var(--purple)' },
+  ].map(f => `
+    <div class="funnel-stage">
+      <div class="funnel-stage-label" style="color:${f.color}">${f.label}</div>
+      <div class="funnel-bar-container">
+        <div class="funnel-bar-inner" style="width:${Math.min(f.pct,100)}%; background:${f.color}20; color:${f.color}; border:1px solid ${f.color}40;">
+          ${f.val}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Channel chart
+  const channelData = [
+    { label: 'SEO', spend: currentResults.spends.seo, conv: currentResults.spends.seo * 0.0003, aware: currentResults.spends.seo * 0.0008 },
+    { label: 'DISPLAY', spend: currentResults.spends.display, conv: currentResults.spends.display * 0.0001, aware: currentResults.spends.display * 0.001 },
+    { label: 'SOCIAL', spend: currentResults.spends.social, conv: currentResults.spends.social * 0.0002, aware: currentResults.spends.social * 0.0006 },
+    { label: 'EMAIL', spend: currentResults.spends.email, conv: currentResults.spends.email * 0.0004, aware: currentResults.spends.email * 0.0003 },
+    { label: 'PPC', spend: currentResults.spends.ppc, conv: currentResults.spends.ppc * 0.0005, aware: currentResults.spends.ppc * 0.0004 },
+    { label: 'RETARGET', spend: currentResults.spends.retarget, conv: currentResults.spends.retarget * 0.0007, aware: currentResults.spends.retarget * 0.0002 },
+    { label: 'LOYALTY', spend: currentResults.spends.loyalty, conv: currentResults.spends.loyalty * 0.0003, aware: currentResults.spends.loyalty * 0.0001 },
+    { label: 'REVIEWS', spend: currentResults.spends.reviews, conv: currentResults.spends.reviews * 0.0002, aware: currentResults.spends.reviews * 0.0002 },
+  ];
+  const maxVal = Math.max(...channelData.map(c => c.spend), 1);
+
+  document.getElementById('channel-chart').innerHTML = channelData.map(c => `
+    <div class="chart-bar-col">
+      <div class="chart-bar" style="height:${Math.max(c.spend/maxVal*110,2)}px; background:linear-gradient(to top, var(--green), var(--blue)); opacity:${c.spend > 0 ? 0.8 : 0.15};"></div>
+      <div class="chart-label">${c.label}<br>$${c.spend > 0 ? (c.spend/1000).toFixed(1)+'k' : '0'}</div>
+    </div>
+  `).join('');
+}
+
+function kpiCard(m, type) {
+  return `
+    <div class="kpi-card ${type}">
+      <div class="kpi-label">${m.label}</div>
+      <div class="kpi-value ${type}">${m.val}</div>
+      <div class="kpi-sub">${m.sub}</div>
+      <div class="kpi-bar"><div class="kpi-bar-fill" style="width:${Math.min(Math.max(m.bar,0),100)}%"></div></div>
+    </div>
+  `;
+}
+
+async function getAIAnalysis() {
+  goToPanel(4);
+  const analysisEl = document.getElementById('analysis-text');
+  analysisEl.innerHTML = '<span class="prompt">$</span> Analyzing campaign data<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>';
+  document.getElementById('analysis-scores').innerHTML = '';
+  document.getElementById('insights-list').innerHTML = '';
+
+  const k = currentResults.kpis;
+  const s = currentResults.spends;
+  const scenario = currentResults.scenario;
+
+  const systemPrompt = `You are a digital marketing analytics coach for a Utah high school Digital Marketing class (Strand 3). You review student campaign simulations and give specific, data-driven feedback using KPI vocabulary from the standards.
+
+Your response must start with this EXACT line:
+SCORES: Awareness:[Strong/Moderate/Weak] | Engagement:[Strong/Moderate/Weak] | Closing:[Strong/Moderate/Weak] | Delight:[Strong/Moderate/Weak] | Overall ROI:[Positive/Break-Even/Negative]
+
+Then write 4–5 paragraphs analyzing the campaign. Reference the student's actual numbers. Use vocabulary like: impressions, unique visitors, bounce rate, conversion rate, CAC, CLV, ROI, NPS, SERP, PPC, retargeting, A/B testing, organic vs paid. 
+
+Then end with:
+INSIGHTS:
+- [one sentence insight about awareness strategy]
+- [one sentence insight about engagement]  
+- [one sentence insight about conversion]
+- [one sentence about delight/retention]
+- [one actionable recommendation]
+
+Keep tone encouraging but analytical. Student is in 11th or 12th grade. Do not use markdown ** or ##.`;
+
+  const userPrompt = `Student Campaign Analysis Request:
+
+SCENARIO: ${scenario.name}
+CAMPAIGN NAME: ${document.getElementById('campaign-name').value || 'Unnamed Campaign'}
+TOTAL BUDGET: $${currentResults.totalBudget.toLocaleString()}
+BUDGET ALLOCATED: $${currentResults.allocated.toLocaleString()}
+
+BUDGET ALLOCATION:
+- SEO: $${s.seo} | Display Ads: $${s.display}
+- Social Media: $${s.social} | Email: $${s.email}
+- PPC: $${s.ppc} | Retargeting: $${s.retarget}
+- Loyalty: $${s.loyalty} | Review Generation: $${s.reviews}
+
+CONTENT STRATEGIES CHOSEN:
+- Awareness: ${currentResults.awarenessContent.join(', ') || 'None selected'}
+- Engagement: ${currentResults.engagementContent.join(', ') || 'None selected'}
+- Closing: ${currentResults.closingContent.join(', ') || 'None selected'}
+- Delight: ${currentResults.delightContent.join(', ') || 'None selected'}
+
+AWARENESS KPIs:
+- Impressions: ${k.impressions.toLocaleString()}
+- Unique Visitors: ${k.uniqueVisitors.toLocaleString()}
+- Page Rank: #${k.pageRank}
+- Page Likes: ${k.pageLikes.toLocaleString()}
+
+ENGAGEMENT KPIs:
+- Bounce Rate: ${k.bounceRate}%
+- Engagement Rate: ${k.engagementRate}%
+- Shares: ${k.shares.toLocaleString()}
+- Page Views: ${k.pageViews.toLocaleString()}
+
+CLOSING KPIs:
+- Conversion Rate: ${k.conversionRate}%
+- New Customers: ${k.newCustomers}
+- Customer Acquisition Cost (CAC): $${k.cac}
+- Revenue Generated: $${k.revenue.toLocaleString()}
+- ROI: ${k.roi}%
+
+DELIGHT KPIs:
+- Net Promoter Score (NPS): ${k.nps}
+- Customer Lifetime Value (CLV): $${k.clv}
+- Review Score: ${k.reviewScore}/5
+- Repeat Purchase Rate: ${k.repeatRate}%`;
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || 'Could not generate analysis. Please try again.';
+
+    const scoreMatch = text.match(/SCORES:(.+)/);
+    const insightsMatch = text.match(/INSIGHTS:([\s\S]+)$/);
+    let mainText = text;
+
+    if (scoreMatch) {
+      mainText = mainText.replace(scoreMatch[0], '').trim();
+      const parts = scoreMatch[1].split('|');
+      document.getElementById('analysis-scores').innerHTML = parts.map(p => {
+        const [label, rating] = p.split(':').map(s => s.trim());
+        let cls = rating === 'Strong' || rating === 'Positive' ? 'high' : rating === 'Moderate' || rating === 'Break-Even' ? 'mid' : 'low';
+        return `<span class="score-badge ${cls}">${label}: ${rating}</span>`;
+      }).join('');
+    }
+
+    if (insightsMatch) {
+      mainText = mainText.replace(insightsMatch[0], '').trim();
+      const insights = insightsMatch[1].trim().split('\n').filter(l => l.trim().startsWith('-'));
+      const icons = ['🔵','🟢','🟡','🟣','⭐'];
+      document.getElementById('insights-list').innerHTML = insights.map((ins, i) => `
+        <div class="insight-row">
+          <div class="insight-icon">${icons[i] || '•'}</div>
+          <div>${ins.replace(/^-\s*/, '')}</div>
+        </div>
+      `).join('');
+    }
+
+    analysisEl.innerHTML = `<span class="prompt">$</span> ${mainText}`;
+
+  } catch (err) {
+    analysisEl.innerHTML = `<span class="prompt">$</span> Error: ${err.message}. Please check your connection and try again.`;
+  }
+}
+
+function resetSim() {
+  if (!confirm('Start a new campaign? Current results will be cleared.')) return;
+  channels.forEach(ch => {
+    document.getElementById(ch).value = 0;
+    document.getElementById(`${ch}-val`).textContent = '0';
+  });
+  document.querySelectorAll('.chip.sel-green, .chip.sel-blue, .chip.sel-amber, .chip.sel-purple')
+    .forEach(c => c.className = 'chip');
+  document.getElementById('campaign-name').value = '';
+  updateBudgetBar();
+  goToPanel(1);
+}
+
+updateBudgetBar();
+</script>
+</body>
+</html>
